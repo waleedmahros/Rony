@@ -491,6 +491,20 @@
             }
         }
 
+        function stopCountdown() {
+            const countdownSound = document.getElementById('sound-countdown');
+            if (countdownSound) {
+                countdownSound.pause();
+                countdownSound.currentTime = 0;
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+            const timerElement = document.getElementById('countdown-timer');
+            if(timerElement) timerElement.style.display = 'none';
+        }
+
         function startCountdown() {
             document.getElementById('sound-countdown')?.play();
 
@@ -502,23 +516,12 @@
             countdownInterval = setInterval(() => {
                 timeLeft--; updateTimer();
                 if (timeLeft <= 0) {
-                    const countdownSound = document.getElementById('sound-countdown');
-                    if (countdownSound) {
-                        countdownSound.pause();
-                        countdownSound.currentTime = 0;
-                    }
-                    clearInterval(countdownInterval); countdownInterval = null;
+                    stopCountdown();
                     if (activePlayers.length === 1) showWinner(activePlayers[0]);
                     else showWinner('لا يوجد فائز!');
                 }
                 if (activePlayers.length > 1) {
-                    const countdownSound = document.getElementById('sound-countdown');
-                    if (countdownSound) {
-                        countdownSound.pause();
-                        countdownSound.currentTime = 0;
-                    }
-                    clearInterval(countdownInterval); countdownInterval = null;
-                    timerElement.style.display = 'none';
+                    stopCountdown();
                 }
             }, 1000);
         }
@@ -597,6 +600,7 @@
         function reAddPlayer(playerName) {
             if (eliminatedPlayers.includes(playerName)) {
                 document.getElementById('sound-re-add')?.play();
+                stopCountdown(); // --- THIS IS THE FIX ---
 
                 if (gameEnded) {
                     gameEnded = false;
@@ -610,18 +614,6 @@
                 playerShields[playerName] = 0;
                 showToast(`تم إعادة ${playerName} للعبة! 🎮`);
                 
-                if (countdownInterval) {
-                    // --- START: FIXED CODE FOR COUNTDOWN SOUND ---
-                    const countdownSound = document.getElementById('sound-countdown');
-                    if (countdownSound) {
-                        countdownSound.pause();
-                        countdownSound.currentTime = 0;
-                    }
-                    // --- END: FIXED CODE ---
-                    clearInterval(countdownInterval); 
-                    countdownInterval = null;
-                    document.getElementById('countdown-timer').style.display = 'none';
-                }
                 setupGame();
             }
         }
@@ -646,6 +638,7 @@
         function addNewPlayer() {
             const newName = prompt("أدخل اسم اللاعب الجديد:");
             if (newName && newName.trim() !== '') {
+                stopCountdown(); // --- THIS IS THE FIX ---
                 const cleanName = newName.trim();
                 const allPlayers = [...activePlayers, ...eliminatedPlayers];
                 if (allPlayers.includes(cleanName)) {
@@ -656,15 +649,6 @@
                 playerShields[cleanName] = 0;
                 showToast(`أهلاً باللاعب الجديد ${cleanName}!`);
                 
-                if (countdownInterval) {
-                     const countdownSound = document.getElementById('sound-countdown');
-                    if (countdownSound) {
-                        countdownSound.pause();
-                        countdownSound.currentTime = 0;
-                    }
-                    clearInterval(countdownInterval); countdownInterval = null;
-                    document.getElementById('countdown-timer').style.display = 'none';
-                }
                 setupGame();
             }
         }
@@ -694,17 +678,12 @@
         function showWinner(winnerName) {
             const music = document.getElementById('music-bg');
             if (music) music.pause();
-            const countdownSound = document.getElementById('sound-countdown');
-            if (countdownSound) {
-                countdownSound.pause();
-                countdownSound.currentTime = 0;
-            }
+            stopCountdown();
             document.getElementById('sound-win')?.play();
 
             gameEnded = true;
             document.getElementById('winner-name').textContent = winnerName;
             document.getElementById('winner-screen').style.display = 'flex';
-            if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
             
             document.getElementById('active-players-section').style.display = 'none';
             document.getElementById('eliminated-section').style.display = 'none';
@@ -731,6 +710,7 @@
                 music.currentTime = 0;
             }
             musicStarted = false;
+            stopCountdown();
             
             if (!isFirstTimeSetup) {
                 const currentPlayers = [...activePlayers, ...eliminatedPlayers];
@@ -751,8 +731,6 @@
             bombAvailableForPlanting = false; 
             randomShieldOnBoard = true;
 
-            if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
-            document.getElementById('countdown-timer').style.display = 'none';
             document.getElementById('bomb-controls').style.display = 'none';
             document.getElementById('startScreen').classList.remove('active');
             document.getElementById('gameScreen').classList.add('active');
