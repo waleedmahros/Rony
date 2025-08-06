@@ -303,6 +303,21 @@
         let gameEnded = false, bombExploded = false, bombAvailableForPlanting = false;
         let playerShields = {};
         let randomShieldOnBoard = true;
+        let musicStarted = false; // --- NEW VARIABLE TO TRACK MUSIC STATE ---
+
+        // --- NEW FUNCTION TO START MUSIC ON FIRST INTERACTION ---
+        function startMusicOnFirstInteraction() {
+            if (!musicStarted) {
+                const music = document.getElementById('music-bg');
+                if (music) {
+                    music.volume = 0.3;
+                    music.play().catch(e => console.error("Music play failed:", e));
+                    musicStarted = true;
+                    // Remove the event listener after the first click to avoid re-triggering
+                    document.body.removeEventListener('click', startMusicOnFirstInteraction);
+                }
+            }
+        }
 
         function startTheGame() {
             const names = document.getElementById('player-names').value.split('\n').map(name => name.trim()).filter(Boolean);
@@ -310,15 +325,10 @@
                 showToast('يجب إدخال اسمين على الأقل!'); return;
             }
 
-            // --- AUDIO INTEGRATION ---
             document.getElementById('sound-start')?.play();
-            const music = document.getElementById('music-bg');
-            if (music) {
-                music.volume = 0.3; // Lower volume for background music
-                music.play();
-            }
-            // --- END AUDIO INTEGRATION ---
-
+            // --- MODIFIED: Add event listener instead of playing directly ---
+            document.body.addEventListener('click', startMusicOnFirstInteraction);
+            
             document.getElementById('active-players-section').style.display = 'block';
             document.getElementById('eliminated-section').style.display = 'block';
 
@@ -389,9 +399,7 @@
         }
 
         function selectFruit(assignment) {
-            // --- AUDIO INTEGRATION ---
             document.getElementById('sound-click')?.play();
-            // --- END AUDIO INTEGRATION ---
 
             if (assignment.used || gameEnded) return;
             assignment.used = true;
@@ -425,9 +433,7 @@
         }
 
         function handleBomb(bombAssignment) {
-            // --- AUDIO INTEGRATION ---
             document.getElementById('sound-bomb')?.play();
-            // --- END AUDIO INTEGRATION ---
 
             bombExploded = true;
             bombAvailableForPlanting = true;
@@ -489,9 +495,7 @@
         }
 
         function startCountdown() {
-            // --- AUDIO INTEGRATION ---
             document.getElementById('sound-countdown')?.play();
-            // --- END AUDIO INTEGRATION ---
 
             let timeLeft = 30;
             const timerElement = document.getElementById('countdown-timer');
@@ -501,17 +505,13 @@
             countdownInterval = setInterval(() => {
                 timeLeft--; updateTimer();
                 if (timeLeft <= 0) {
-                    // --- AUDIO INTEGRATION ---
                     document.getElementById('sound-countdown')?.pause();
-                    // --- END AUDIO INTEGRATION ---
                     clearInterval(countdownInterval); countdownInterval = null;
                     if (activePlayers.length === 1) showWinner(activePlayers[0]);
                     else showWinner('لا يوجد فائز!');
                 }
                 if (activePlayers.length > 1) {
-                    // --- AUDIO INTEGRATION ---
                     document.getElementById('sound-countdown')?.pause();
-                    // --- END AUDIO INTEGRATION ---
                     clearInterval(countdownInterval); countdownInterval = null;
                     timerElement.style.display = 'none';
                 }
@@ -519,13 +519,11 @@
         }
 
         function showEliminationPopup(message, type = 'elimination') {
-            // --- AUDIO INTEGRATION ---
             if (type === 'shield' || (type === 'bomb' && message.includes('تم إنقاذ'))) {
                  document.getElementById('sound-shield')?.play();
-            } else if (type !== 'bomb') { // Bomb sound is played separately
+            } else if (type !== 'bomb') {
                  document.getElementById('sound-elimination')?.play();
             }
-            // --- END AUDIO INTEGRATION ---
 
             const popupTitle = document.getElementById('popup-title-text');
             const popupName = document.getElementById('eliminated-player-name');
@@ -593,9 +591,7 @@
         
         function reAddPlayer(playerName) {
             if (eliminatedPlayers.includes(playerName)) {
-                // --- AUDIO INTEGRATION ---
                 document.getElementById('sound-re-add')?.play();
-                // --- END AUDIO INTEGRATION ---
 
                 if (gameEnded) {
                     gameEnded = false;
@@ -678,11 +674,10 @@
         }
         
         function showWinner(winnerName) {
-            // --- AUDIO INTEGRATION ---
-            document.getElementById('music-bg')?.pause();
+            const music = document.getElementById('music-bg');
+            if (music) music.pause();
             document.getElementById('sound-countdown')?.pause();
             document.getElementById('sound-win')?.play();
-            // --- END AUDIO INTEGRATION ---
 
             gameEnded = true;
             document.getElementById('winner-name').textContent = winnerName;
@@ -708,10 +703,12 @@
         }
 
         function playAgain(isFirstTimeSetup = false) {
-            // --- AUDIO INTEGRATION ---
-            document.getElementById('music-bg')?.pause();
-            document.getElementById('music-bg').currentTime = 0; // Reset music to start from beginning
-            // --- END AUDIO INTEGRATION ---
+            const music = document.getElementById('music-bg');
+            if (music) {
+                music.pause();
+                music.currentTime = 0;
+            }
+            musicStarted = false; // Reset music flag
             
             if (!isFirstTimeSetup) {
                 const currentPlayers = [...activePlayers, ...eliminatedPlayers];
