@@ -303,9 +303,8 @@
         let gameEnded = false, bombExploded = false, bombAvailableForPlanting = false;
         let playerShields = {};
         let randomShieldOnBoard = true;
-        let musicStarted = false; // --- NEW VARIABLE TO TRACK MUSIC STATE ---
+        let musicStarted = false;
 
-        // --- NEW FUNCTION TO START MUSIC ON FIRST INTERACTION ---
         function startMusicOnFirstInteraction() {
             if (!musicStarted) {
                 const music = document.getElementById('music-bg');
@@ -313,7 +312,6 @@
                     music.volume = 0.3;
                     music.play().catch(e => console.error("Music play failed:", e));
                     musicStarted = true;
-                    // Remove the event listener after the first click to avoid re-triggering
                     document.body.removeEventListener('click', startMusicOnFirstInteraction);
                 }
             }
@@ -326,7 +324,6 @@
             }
 
             document.getElementById('sound-start')?.play();
-            // --- MODIFIED: Add event listener instead of playing directly ---
             document.body.addEventListener('click', startMusicOnFirstInteraction);
             
             document.getElementById('active-players-section').style.display = 'block';
@@ -505,13 +502,21 @@
             countdownInterval = setInterval(() => {
                 timeLeft--; updateTimer();
                 if (timeLeft <= 0) {
-                    document.getElementById('sound-countdown')?.pause();
+                    const countdownSound = document.getElementById('sound-countdown');
+                    if (countdownSound) {
+                        countdownSound.pause();
+                        countdownSound.currentTime = 0;
+                    }
                     clearInterval(countdownInterval); countdownInterval = null;
                     if (activePlayers.length === 1) showWinner(activePlayers[0]);
                     else showWinner('لا يوجد فائز!');
                 }
                 if (activePlayers.length > 1) {
-                    document.getElementById('sound-countdown')?.pause();
+                    const countdownSound = document.getElementById('sound-countdown');
+                    if (countdownSound) {
+                        countdownSound.pause();
+                        countdownSound.currentTime = 0;
+                    }
                     clearInterval(countdownInterval); countdownInterval = null;
                     timerElement.style.display = 'none';
                 }
@@ -606,7 +611,15 @@
                 showToast(`تم إعادة ${playerName} للعبة! 🎮`);
                 
                 if (countdownInterval) {
-                    clearInterval(countdownInterval); countdownInterval = null;
+                    // --- START: FIXED CODE FOR COUNTDOWN SOUND ---
+                    const countdownSound = document.getElementById('sound-countdown');
+                    if (countdownSound) {
+                        countdownSound.pause();
+                        countdownSound.currentTime = 0;
+                    }
+                    // --- END: FIXED CODE ---
+                    clearInterval(countdownInterval); 
+                    countdownInterval = null;
                     document.getElementById('countdown-timer').style.display = 'none';
                 }
                 setupGame();
@@ -644,6 +657,11 @@
                 showToast(`أهلاً باللاعب الجديد ${cleanName}!`);
                 
                 if (countdownInterval) {
+                     const countdownSound = document.getElementById('sound-countdown');
+                    if (countdownSound) {
+                        countdownSound.pause();
+                        countdownSound.currentTime = 0;
+                    }
                     clearInterval(countdownInterval); countdownInterval = null;
                     document.getElementById('countdown-timer').style.display = 'none';
                 }
@@ -676,7 +694,11 @@
         function showWinner(winnerName) {
             const music = document.getElementById('music-bg');
             if (music) music.pause();
-            document.getElementById('sound-countdown')?.pause();
+            const countdownSound = document.getElementById('sound-countdown');
+            if (countdownSound) {
+                countdownSound.pause();
+                countdownSound.currentTime = 0;
+            }
             document.getElementById('sound-win')?.play();
 
             gameEnded = true;
@@ -708,7 +730,7 @@
                 music.pause();
                 music.currentTime = 0;
             }
-            musicStarted = false; // Reset music flag
+            musicStarted = false;
             
             if (!isFirstTimeSetup) {
                 const currentPlayers = [...activePlayers, ...eliminatedPlayers];
