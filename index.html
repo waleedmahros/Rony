@@ -127,28 +127,19 @@
         .fruit-item.used { transform: scale(0) rotate(360deg); opacity: 0; pointer-events: none; }
         
         .fruit-emoji {
-            font-size: clamp(4rem, 15vw, 8rem);
-            line-height: 0.9;
-            flex-grow: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: clamp(4rem, 15vw, 8rem); line-height: 0.9; flex-grow: 2;
+            display: flex; align-items: center; justify-content: center;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
         }
         .fruit-name {
-            font-size: clamp(1.3rem, 4vw, 2rem);
-            font-weight: 800;
-            line-height: 1.1;
-            text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
-            flex-shrink: 0;
-            padding: 2px 4px;
+            font-size: clamp(1.3rem, 4vw, 2rem); font-weight: 800; line-height: 1.1;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.7); flex-shrink: 0; padding: 2px 4px;
         }
         
         @media (max-width: 480px) {
             .container { padding: 15px; } h1 { font-size: 2rem; } h2 { font-size: 1.2rem; }
             #fruit-grid { gap: 8px; padding: 10px; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); }
-            .fruit-emoji { font-size: 3.5rem; }
-            .fruit-name { font-size: 1.3rem; }
+            .fruit-emoji { font-size: 3.5rem; } .fruit-name { font-size: 1.3rem; }
             .btn { padding: 12px 20px; font-size: 1rem; }
             .btn-start { font-size: 1.2rem; padding: 15px 25px; }
         }
@@ -185,12 +176,9 @@
         #winner-screen { cursor: default; }
         #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         #winner-name { 
-            font-size: 3.5rem; 
-            font-weight: 800; 
-            color: var(--primary-color); 
+            font-size: 3.5rem; font-weight: 800; color: var(--primary-color); 
             text-shadow: 3px 3px 0px var(--secondary-color), 6px 6px 0px rgba(0,0,0,0.3);
-            margin: 20px 0;
-            line-height: 1.2;
+            margin: 20px 0; line-height: 1.2;
         }
         
         .popup-title { font-size: 2.5rem; color: var(--btn-eliminate-bg); margin-bottom: 20px; }
@@ -239,7 +227,7 @@
     
     <div id="startScreen" class="container screen active">
         <h1>🍎 حرب الفواكه 🍊</h1>
-        <h2>إصدار القنابل والدرع</h2>
+        <h2>مع روني</h2>
         <textarea id="player-names" placeholder="أضف أسماء اللاعبين هنا، كل اسم في سطر جديد..."></textarea>
         <div>
             <button onclick="savePlayersList()" class="btn btn-save">💾 حفظ</button>
@@ -293,6 +281,15 @@
     
     <div id="toast"></div>
 
+    <audio id="music-bg" src="game.mp3" loop></audio>
+    <audio id="sound-start" src="gamestart.mp3" preload="auto"></audio>
+    <audio id="sound-click" src="squish.mp3" preload="auto"></audio>
+    <audio id="sound-elimination" src="exclusion.mp3" preload="auto"></audio>
+    <audio id="sound-win" src="celebrate.mp3" preload="auto"></audio>
+    <audio id="sound-bomb" src="bomb.mp3" preload="auto"></audio>
+    <audio id="sound-shield" src="protect.mp3" preload="auto"></audio>
+    <audio id="sound-countdown" src="countdown.mp3" preload="auto" loop></audio>
+    <audio id="sound-re-add" src="return.mp3" preload="auto"></audio>
     <script>
         const fruits = [
             'تفاح 🍎', 'موز 🍌', 'برتقال 🍊', 'عنب 🍇', 'فراولة 🍓', 'كرز 🍒', 'أناناس 🍍', 'بطيخ 🍉',
@@ -312,6 +309,16 @@
             if (names.length < 2) {
                 showToast('يجب إدخال اسمين على الأقل!'); return;
             }
+
+            // --- AUDIO INTEGRATION ---
+            document.getElementById('sound-start')?.play();
+            const music = document.getElementById('music-bg');
+            if (music) {
+                music.volume = 0.3; // Lower volume for background music
+                music.play();
+            }
+            // --- END AUDIO INTEGRATION ---
+
             document.getElementById('active-players-section').style.display = 'block';
             document.getElementById('eliminated-section').style.display = 'block';
 
@@ -382,6 +389,10 @@
         }
 
         function selectFruit(assignment) {
+            // --- AUDIO INTEGRATION ---
+            document.getElementById('sound-click')?.play();
+            // --- END AUDIO INTEGRATION ---
+
             if (assignment.used || gameEnded) return;
             assignment.used = true;
             document.getElementById(assignment.id).classList.add('used');
@@ -414,6 +425,10 @@
         }
 
         function handleBomb(bombAssignment) {
+            // --- AUDIO INTEGRATION ---
+            document.getElementById('sound-bomb')?.play();
+            // --- END AUDIO INTEGRATION ---
+
             bombExploded = true;
             bombAvailableForPlanting = true;
             let reshuffleNeeded = false;
@@ -474,6 +489,10 @@
         }
 
         function startCountdown() {
+            // --- AUDIO INTEGRATION ---
+            document.getElementById('sound-countdown')?.play();
+            // --- END AUDIO INTEGRATION ---
+
             let timeLeft = 30;
             const timerElement = document.getElementById('countdown-timer');
             timerElement.style.display = 'block';
@@ -482,11 +501,17 @@
             countdownInterval = setInterval(() => {
                 timeLeft--; updateTimer();
                 if (timeLeft <= 0) {
+                    // --- AUDIO INTEGRATION ---
+                    document.getElementById('sound-countdown')?.pause();
+                    // --- END AUDIO INTEGRATION ---
                     clearInterval(countdownInterval); countdownInterval = null;
                     if (activePlayers.length === 1) showWinner(activePlayers[0]);
                     else showWinner('لا يوجد فائز!');
                 }
                 if (activePlayers.length > 1) {
+                    // --- AUDIO INTEGRATION ---
+                    document.getElementById('sound-countdown')?.pause();
+                    // --- END AUDIO INTEGRATION ---
                     clearInterval(countdownInterval); countdownInterval = null;
                     timerElement.style.display = 'none';
                 }
@@ -494,6 +519,14 @@
         }
 
         function showEliminationPopup(message, type = 'elimination') {
+            // --- AUDIO INTEGRATION ---
+            if (type === 'shield' || (type === 'bomb' && message.includes('تم إنقاذ'))) {
+                 document.getElementById('sound-shield')?.play();
+            } else if (type !== 'bomb') { // Bomb sound is played separately
+                 document.getElementById('sound-elimination')?.play();
+            }
+            // --- END AUDIO INTEGRATION ---
+
             const popupTitle = document.getElementById('popup-title-text');
             const popupName = document.getElementById('eliminated-player-name');
             if (type === 'bomb') { popupTitle.textContent = '💣 انفجار! 💣'; popupTitle.style.color = 'var(--btn-eliminate-bg)'; } 
@@ -507,22 +540,17 @@
         
         function updateGameInfo() { document.getElementById('active-players-count').textContent = `النشطون: ${activePlayers.length} | المقصيون: ${eliminatedPlayers.length}`; }
 
-        // === START: FIXED FUNCTION ===
         function updateEliminatedList() {
             const list = document.getElementById('eliminated-list');
-            list.innerHTML = ''; // Clear the list first
+            list.innerHTML = ''; 
 
-            // Handle the special button separately to ensure no errors
             const reAddOldestBtn = document.getElementById('btn-re-add-oldest');
-            if (reAddOldestBtn) { // Check if the button exists
-                // Show the button only if there are players to re-add
+            if (reAddOldestBtn) {
                 reAddOldestBtn.style.display = eliminatedPlayers.length > 0 ? 'inline-block' : 'none';
             }
 
-            // Now, populate the list of eliminated players
             eliminatedPlayers.forEach((player, index) => {
                 const li = document.createElement('li');
-
                 const button = document.createElement('button');
                 button.className = 'btn-re-add';
                 button.setAttribute('data-player-name', player);
@@ -538,8 +566,6 @@
                 list.appendChild(li);
             });
         }
-        // === END: FIXED FUNCTION ===
-
 
         function getSafePlayerId(playerName) { return `player-id-${playerName.replace(/[^a-zA-Z0-9أ-ي]/g, '_')}`; }
         
@@ -567,6 +593,10 @@
         
         function reAddPlayer(playerName) {
             if (eliminatedPlayers.includes(playerName)) {
+                // --- AUDIO INTEGRATION ---
+                document.getElementById('sound-re-add')?.play();
+                // --- END AUDIO INTEGRATION ---
+
                 if (gameEnded) {
                     gameEnded = false;
                     document.getElementById('winner-screen').style.display = 'none';
@@ -589,7 +619,6 @@
 
         function reAddOldestEliminatedPlayer() {
             if (eliminatedPlayers.length > 0) {
-                // Get the LAST player in the array (who was the FIRST to be eliminated)
                 const playerToReAdd = eliminatedPlayers[eliminatedPlayers.length - 1]; 
                 reAddPlayer(playerToReAdd);
             }
@@ -649,6 +678,12 @@
         }
         
         function showWinner(winnerName) {
+            // --- AUDIO INTEGRATION ---
+            document.getElementById('music-bg')?.pause();
+            document.getElementById('sound-countdown')?.pause();
+            document.getElementById('sound-win')?.play();
+            // --- END AUDIO INTEGRATION ---
+
             gameEnded = true;
             document.getElementById('winner-name').textContent = winnerName;
             document.getElementById('winner-screen').style.display = 'flex';
@@ -673,6 +708,11 @@
         }
 
         function playAgain(isFirstTimeSetup = false) {
+            // --- AUDIO INTEGRATION ---
+            document.getElementById('music-bg')?.pause();
+            document.getElementById('music-bg').currentTime = 0; // Reset music to start from beginning
+            // --- END AUDIO INTEGRATION ---
+            
             if (!isFirstTimeSetup) {
                 const currentPlayers = [...activePlayers, ...eliminatedPlayers];
                 document.getElementById('player-names').value = currentPlayers.join('\n');
