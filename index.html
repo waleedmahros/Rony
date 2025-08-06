@@ -491,6 +491,7 @@
             }
         }
 
+        // --- START: MODIFIED/NEW HELPER FUNCTION ---
         function stopCountdown() {
             const countdownSound = document.getElementById('sound-countdown');
             if (countdownSound) {
@@ -504,6 +505,7 @@
             const timerElement = document.getElementById('countdown-timer');
             if(timerElement) timerElement.style.display = 'none';
         }
+        // --- END: MODIFIED/NEW HELPER FUNCTION ---
 
         function startCountdown() {
             document.getElementById('sound-countdown')?.play();
@@ -600,7 +602,7 @@
         function reAddPlayer(playerName) {
             if (eliminatedPlayers.includes(playerName)) {
                 document.getElementById('sound-re-add')?.play();
-                stopCountdown(); // --- THIS IS THE FIX ---
+                stopCountdown();
 
                 if (gameEnded) {
                     gameEnded = false;
@@ -638,7 +640,7 @@
         function addNewPlayer() {
             const newName = prompt("أدخل اسم اللاعب الجديد:");
             if (newName && newName.trim() !== '') {
-                stopCountdown(); // --- THIS IS THE FIX ---
+                stopCountdown();
                 const cleanName = newName.trim();
                 const allPlayers = [...activePlayers, ...eliminatedPlayers];
                 if (allPlayers.includes(cleanName)) {
