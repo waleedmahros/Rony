@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>حرب الفواكه - إصدار القنابل والدرع</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;700;800&display=swap" rel="stylesheet">
@@ -22,6 +22,7 @@
             --btn-re-add-special-bg: #1abc9c;
         }
 
+        /* ---------- BASE LAYOUT ---------- */
         body {
             font-family: 'Changa', sans-serif;
             background: linear-gradient(-45deg, #ff8c94, #ffcf86, #84fab0, #8fd3f4);
@@ -33,6 +34,7 @@
             color: #fff;
             min-height: 100vh;
             overflow-x: hidden;
+            direction: rtl;
         }
 
         @keyframes gradient-animation {
@@ -64,7 +66,7 @@
             border-radius: 10px; border: 2px solid #ccc; background-color: #f0f0f0;
             color: #333; display: block;
         }
-        
+
         .btn {
             padding: 15px 30px; font-size: 1.2rem; font-family: 'Changa', sans-serif;
             font-weight: 700; border-radius: 50px; border: none; cursor: pointer;
@@ -92,7 +94,7 @@
             flex-shrink: 0;
         }
         .btn-re-add:hover { background-color: #16a085; transform: scale(1.1); }
-        
+
         .section-header {
             display: flex;
             justify-content: center;
@@ -118,14 +120,25 @@
 
         .fruit-item {
             cursor: pointer; text-align: center; padding: 5px; border-radius: 15px;
-            background: rgba(255,255,255,0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255,255,255,0.15); transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.25s;
             position: relative; aspect-ratio: 1; display: flex;
             flex-direction: column; align-items: center; justify-content: center;
-            border: 1px solid rgba(255,255,255,0.2); gap: 0;
+            border: 1px solid rgba(255,255,255,0.2); gap: 0; overflow: hidden;
+            transform-origin: center center;
         }
-        .fruit-item:hover { transform: scale(1.1); background: rgba(255,255,255,0.3); }
-        .fruit-item.used { transform: scale(0) rotate(360deg); opacity: 0; pointer-events: none; }
-        
+        .fruit-item:hover { transform: scale(1.07); background: rgba(255,255,255,0.28); }
+        /* ديناميكية خروج الفاكهة - حركة جميلة */
+        @keyframes fruitDisappear {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; filter: blur(0px); }
+            30% { transform: translateY(-8px) scale(1.05) rotate(10deg); opacity: 0.95; filter: blur(0px); }
+            70% { transform: translateY(30px) scale(0.8) rotate(60deg); opacity: 0.6; filter: blur(1px); }
+            100% { transform: translateY(120px) scale(0) rotate(90deg); opacity: 0; filter: blur(2px); }
+        }
+        .fruit-item.used {
+            pointer-events: none;
+            animation: fruitDisappear 0.7s cubic-bezier(.2,.9,.3,1) forwards;
+        }
+
         .fruit-emoji {
             font-size: clamp(4rem, 15vw, 8rem); line-height: 0.9; flex-grow: 2;
             display: flex; align-items: center; justify-content: center;
@@ -135,7 +148,7 @@
             font-size: clamp(1.3rem, 4vw, 2rem); font-weight: 800; line-height: 1.1;
             text-shadow: 2px 2px 6px rgba(0,0,0,0.7); flex-shrink: 0; padding: 2px 4px;
         }
-        
+
         @media (max-width: 480px) {
             .container { padding: 15px; } h1 { font-size: 2rem; } h2 { font-size: 1.2rem; }
             #fruit-grid { gap: 8px; padding: 10px; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); }
@@ -143,7 +156,7 @@
             .btn { padding: 12px 20px; font-size: 1rem; }
             .btn-start { font-size: 1.2rem; padding: 15px 25px; }
         }
-        
+
         #active-players-section, #eliminated-section { margin-top: 30px; padding: 20px; border-radius: 15px; }
         #eliminated-section { background: rgba(0,0,0,0.2); }
         #active-players-section { background: rgba(52, 152, 219, 0.15); border: 1px solid rgba(52, 152, 219, 0.3); }
@@ -166,33 +179,50 @@
         .shield-controls button:hover { background-color: #2980b9; transform: scale(1.1); }
         .shield-controls span { font-weight: bold; min-width: 40px; text-align: center; }
 
-        #elimination-popup, #winner-screen {
+        /* ---------- ELIMINATION POPUP (improved visuals) ---------- */
+        #elimination-popup {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center;
-            align-items: center; flex-direction: column; color: white;
+            background: rgba(0,0,0,0.75); z-index: 1000; justify-content: center;
+            align-items: center; flex-direction: column; color: white; padding: 20px;
         }
-        
-        .winner-content { text-align: center; }
-        #winner-screen { cursor: default; }
-        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        #winner-name { 
-            font-size: 3.5rem; font-weight: 800; color: var(--primary-color); 
+        .popup-card {
+            width: min(720px, 95%); background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+            border-radius: 18px; padding: 28px; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.06); text-align: center;
+            transform-origin: center center;
+        }
+        .popup-title { font-size: 2.2rem; color: var(--btn-eliminate-bg); margin-bottom: 14px; font-weight: 800; text-shadow: 2px 2px 6px rgba(0,0,0,0.4); }
+        .popup-name { font-size: 1.3rem; margin-bottom: 14px; line-height: 1.6; color: #fff; }
+        .popup-hint { font-size: 0.95rem; color: #ddd; margin-top: 8px; opacity: 0.9; }
+
+        /* ---------- WINNER SCREEN (improved visuals) ---------- */
+        #winner-screen {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1100; justify-content: center; align-items: center; flex-direction: column;
+            padding: 20px; cursor: default;
+        }
+        #winner-screen .winner-layer {
+            width: min(820px, 98%); background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(0,0,0,0.08));
+            border-radius: 20px; padding: 36px; box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.06); text-align: center;
+        }
+        #winner-screen h1 { font-size: 3rem; color: #fff; margin: 0 0 8px 0; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); }
+        #winner-name {
+            font-size: 2.8rem; font-weight: 800; color: var(--primary-color);
             text-shadow: 3px 3px 0px var(--secondary-color), 6px 6px 0px rgba(0,0,0,0.3);
-            margin: 20px 0; line-height: 1.2;
+            margin: 20px 0; line-height: 1.1;
         }
-        
-        .popup-title { font-size: 2.5rem; color: var(--btn-eliminate-bg); margin-bottom: 20px; }
-        .popup-name { font-size: 1.8rem; margin-bottom: 20px; text-align: center; line-height: 1.6; padding: 0 20px; }
-        .popup-hint { font-size: 0.9rem; color: #ccc; position: absolute; bottom: 20px; }
+        #winner-screen .subtext { color: #eee; margin-bottom: 18px; font-size: 1.1rem; }
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 105; pointer-events: none; }
 
         @keyframes winner-pop {
-            0% { transform: scale(0.5); opacity: 0; }
+            0% { transform: scale(0.7); opacity: 0; }
             70% { transform: scale(1.05); opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
         }
         #winner-screen h1, #winner-name { animation: winner-pop 0.8s ease-out forwards; }
-        #winner-name { animation-delay: 0.2s; }
-        
+
         #countdown-timer {
             display: none; position: fixed; top: 20px; left: 50%;
             transform: translateX(-50%); background-color: #c0392b; color: white;
@@ -201,7 +231,7 @@
         }
 
         @keyframes pulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } 100% { transform: translateX(-50%) scale(1); } }
-        
+
         #toast {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background-color: #2c3e50; color: white; padding: 12px 20px;
@@ -221,10 +251,28 @@
         .btn-plant-bomb:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4); background: linear-gradient(45deg, #c0392b, #a93226); }
         .btn-plant-bomb:disabled { background: #7f8c8d; cursor: not-allowed; transform: none; box-shadow: none; }
         .bomb-status { font-size: 0.9rem; color: #ecf0f1; margin-top: 8px; font-weight: 600; }
+
+        /* ---------- RONY GAMES WATERMARK ---------- */
+        #watermark {
+            position: fixed;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 22px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.92);
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+            z-index: 99999;
+            pointer-events: none;
+            font-family: 'Changa', sans-serif;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
-    
+    <!-- Watermark ثابت للملكية الفكرية -->
+    <div id="watermark">RONY GAMES</div>
+
     <div id="startScreen" class="container screen active">
         <h1>🍎 حرب الفواكه 🍊</h1>
         <h2>مع روني</h2>
@@ -264,23 +312,29 @@
         </div>
     </div>
 
+    <!-- نافذة الإقصاء المحسنة -->
     <div id="elimination-popup" onclick="closeEliminationPopup()">
-        <h1 class="popup-title" id="popup-title-text">❌ تم إقصاء ❌</h1>
-        <div class="popup-name" id="eliminated-player-name"></div>
-        <p class="popup-hint">اضغط في أي مكان للإغلاق</p>
+        <div class="popup-card" onclick="event.stopPropagation();">
+            <h1 class="popup-title" id="popup-title-text">❌ تم إقصاء ❌</h1>
+            <div class="popup-name" id="eliminated-player-name"></div>
+            <p class="popup-hint">اضغط في أي مكان للإغلاق</p>
+        </div>
     </div>
 
+    <!-- شاشة الفائز المحسنة -->
     <div id="winner-screen">
         <canvas id="confetti-canvas"></canvas>
-        <div class="winner-content">
+        <div class="winner-layer">
             <h1>🏆 الفائز 🏆</h1>
+            <div class="subtext">تهانينا! 🎉</div>
             <h2 id="winner-name"></h2>
             <button onclick="playAgain()" class="btn btn-again">🔄 اللعب مرة أخرى</button>
         </div>
     </div>
-    
+
     <div id="toast"></div>
 
+    <!-- الأصوات (ملفات صوتية يجب توفيرها في نفس المسار أو تعديل الروابط) -->
     <audio id="music-bg" src="game.mp3" loop></audio>
     <audio id="sound-start" src="gamestart.mp3" preload="auto"></audio>
     <audio id="sound-click" src="squish.mp3" preload="auto"></audio>
@@ -290,7 +344,11 @@
     <audio id="sound-shield" src="protect.mp3" preload="auto"></audio>
     <audio id="sound-countdown" src="countdown.mp3" preload="auto" loop></audio>
     <audio id="sound-re-add" src="return.mp3" preload="auto"></audio>
+
     <script>
+        // -------------------------
+        // بيانات اللعبة (كما في الأصل)
+        // -------------------------
         const fruits = [
             'تفاح 🍎', 'موز 🍌', 'برتقال 🍊', 'عنب 🍇', 'فراولة 🍓', 'كرز 🍒', 'أناناس 🍍', 'بطيخ 🍉',
             'خوخ 🍑', 'كمثرى 🍐', 'ليمون 🍋', 'كيوي 🥝', 'مانجو 🥭', 'أفوكادو 🥑', 'جوز الهند 🥥', 'توت 🫐',
@@ -305,18 +363,58 @@
         let randomShieldOnBoard = true;
         let musicStarted = false;
 
-        function startMusicOnFirstInteraction() {
-            if (!musicStarted) {
-                const music = document.getElementById('music-bg');
-                if (music) {
-                    music.volume = 0.3;
-                    music.play().catch(e => console.error("Music play failed:", e));
-                    musicStarted = true;
-                    document.body.removeEventListener('click', startMusicOnFirstInteraction);
+        // عناصر الصوت - ضمان loop وإعادة التشغيل
+        const musicElement = document.getElementById('music-bg');
+        if (musicElement) {
+            musicElement.loop = true;
+            musicElement.volume = 0.32;
+            // عند انتهاء الملف (بعض المتصفحات) تأكد من إعادة التشغيل
+            musicElement.addEventListener('ended', () => {
+                try {
+                    musicElement.currentTime = 0;
+                    musicElement.play().catch(()=>{ /* ممكن منع التشغيل التلقائي */ });
+                } catch (e) { /* ignore */ }
+            });
+            // لو توقف غير متوقع حاول استئنافه على تفاعل المستخدم
+            musicElement.addEventListener('pause', () => {
+                if (!gameEnded && musicStarted) {
+                    // لا نجبر التشغيل هنا لأن المتصفح قد يمنع، لكن نترك handler للتفاعل
+                    // سيتم استدعاء startMusicOnFirstInteraction عند التفاعل التالي
                 }
-            }
+            });
         }
 
+        // ضمان تشغيل الموسيقى عند أول تفاعل (سياسة autoplay)
+        function startMusicOnFirstInteraction() {
+            if (!musicStarted) {
+                if (musicElement) {
+                    musicElement.volume = 0.32;
+                    musicElement.play().catch(e => {
+                        // قد يحدث رفض التشغيل التلقائي، سنتعامل معه بهدوء
+                        console.log("Music play prevented - will attempt again after user interaction.");
+                    });
+                }
+                musicStarted = true;
+                // نزيل المستمع بعد أول تفاعل لتقليل overhead
+                document.body.removeEventListener('click', startMusicOnFirstInteraction);
+                document.body.removeEventListener('touchstart', startMusicOnFirstInteraction);
+            }
+        }
+        document.body.addEventListener('click', startMusicOnFirstInteraction);
+        document.body.addEventListener('touchstart', startMusicOnFirstInteraction);
+
+        // لو الصفحة استعادتها المتصفح بعد خفاء - حاول تشغيل الموسيقى لو اللعبة مش منتهية
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && !gameEnded && musicStarted) {
+                if (musicElement && musicElement.paused) {
+                    musicElement.play().catch(()=>{});
+                }
+            }
+        });
+
+        // -------------------------
+        // وظائف اللعبة (لم تتغير منطقياً) - مع تعديلات بسيطة لتفعيل animation عند الاستخدام
+        // -------------------------
         function startTheGame() {
             const names = document.getElementById('player-names').value.split('\n').map(name => name.trim()).filter(Boolean);
             if (names.length < 2) {
@@ -325,12 +423,12 @@
 
             document.getElementById('sound-start')?.play();
             document.body.addEventListener('click', startMusicOnFirstInteraction);
-            
+
             document.getElementById('active-players-section').style.display = 'block';
             document.getElementById('eliminated-section').style.display = 'block';
 
             activePlayers = [...names];
-            playAgain(true); 
+            playAgain(true);
         }
 
         function setupGame() {
@@ -339,7 +437,7 @@
             const shuffledFruits = [...fruits].sort(() => Math.random() - 0.5);
             const shuffledPlayers = [...activePlayers].sort(() => Math.random() - 0.5);
             fruitAssignments = [];
-            
+
             shuffledPlayers.forEach((player, i) => {
                 fruitAssignments.push({
                     id: `item-${i}`, player, fruitName: shuffledFruits[i % shuffledFruits.length],
@@ -355,7 +453,7 @@
                 }
                 bombIndices.forEach(index => fruitAssignments[index].type = 'bomb');
             }
-            
+
             if (randomShieldOnBoard) {
                 const potentialShieldSpots = fruitAssignments.filter(a => a.type === 'normal');
                 if(potentialShieldSpots.length > 0) {
@@ -369,18 +467,18 @@
                 const fruitDiv = document.createElement('div');
                 fruitDiv.id = assignment.id;
                 fruitDiv.className = 'fruit-item';
-                
+
                 const parts = assignment.fruitName.split(' ');
                 const emoji = parts.pop();
                 const name = parts.join(' ');
-                
+
                 fruitDiv.innerHTML = `<div class="fruit-emoji">${emoji}</div><div class="fruit-name">${name}</div>`;
-                
+
                 fruitDiv.onclick = () => selectFruit(assignment);
                 fruitGrid.appendChild(fruitDiv);
             });
-            updateGameInfo(); 
-            updateEliminatedList(); 
+            updateGameInfo();
+            updateEliminatedList();
             updateActivePlayersList();
             updateBombControls();
         }
@@ -400,8 +498,11 @@
 
             if (assignment.used || gameEnded) return;
             assignment.used = true;
-            document.getElementById(assignment.id).classList.add('used');
-            
+
+            // تطبيق الكلاس اللي بيعمل انيميشن الخروج
+            const el = document.getElementById(assignment.id);
+            if (el) el.classList.add('used');
+
             setTimeout(() => {
                 let reshuffleNeeded = false;
 
@@ -409,7 +510,7 @@
                     reshuffleNeeded = handleBomb(assignment);
                 } else if (assignment.type === 'shield') {
                     handleShield(assignment);
-                    reshuffleNeeded = true; 
+                    reshuffleNeeded = true;
                 } else {
                     const playerName = assignment.player;
                     const wasSaved = processElimination(playerName);
@@ -422,7 +523,7 @@
                 }
 
                 if (reshuffleNeeded) {
-                    setTimeout(setupGame, 1500); 
+                    setTimeout(setupGame, 1500);
                 } else {
                     checkGameStatus();
                 }
@@ -443,20 +544,20 @@
                 const additionalVictimAssignment = potentialVictims[Math.floor(Math.random() * potentialVictims.length)];
                 additionalVictim = additionalVictimAssignment.player;
                 additionalVictimAssignment.used = true;
-                document.getElementById(additionalVictimAssignment.id).classList.add('used');
+                document.getElementById(additionalVictimAssignment.id)?.classList.add('used');
             }
 
             let savedList = [];
             let eliminatedList = [];
 
-            if (processElimination(mainVictim)) { savedList.push(mainVictim); reshuffleNeeded = true; } 
+            if (processElimination(mainVictim)) { savedList.push(mainVictim); reshuffleNeeded = true; }
             else { eliminatedList.push(mainVictim); }
 
             if (additionalVictim) {
                 if (processElimination(additionalVictim)) { savedList.push(additionalVictim); reshuffleNeeded = true; }
                 else { eliminatedList.push(additionalVictim); }
             }
-            
+
             let message = "💣 قنبلة! 💥";
             if(eliminatedList.length > 0) message += `<br>تم إقصاء: ${eliminatedList.join(' و ')}`;
             if(savedList.length > 0) message += `<br>تم إنقاذ: ${savedList.join(' و ')} بالدرع`;
@@ -465,7 +566,7 @@
             updateBombControls();
             return reshuffleNeeded;
         }
-        
+
         function handleShield(shieldAssignment) {
             randomShieldOnBoard = false;
             const savedPlayer = shieldAssignment.player;
@@ -481,7 +582,7 @@
         }
 
         function checkGameStatus() {
-            updateGameInfo(); 
+            updateGameInfo();
             updateEliminatedList();
             updateActivePlayersList();
             if (activePlayers.length === 1 && !countdownInterval) {
@@ -537,20 +638,20 @@
 
             const popupTitle = document.getElementById('popup-title-text');
             const popupName = document.getElementById('eliminated-player-name');
-            if (type === 'bomb') { popupTitle.textContent = '💣 انفجار! 💣'; popupTitle.style.color = 'var(--btn-eliminate-bg)'; } 
-            else if (type === 'shield') { popupTitle.textContent = '🛡️ نجاة! 🛡️'; popupTitle.style.color = 'var(--shield-color)'; } 
+            if (type === 'bomb') { popupTitle.textContent = '💣 انفجار! 💣'; popupTitle.style.color = 'var(--btn-eliminate-bg)'; }
+            else if (type === 'shield') { popupTitle.textContent = '🛡️ نجاة! 🛡️'; popupTitle.style.color = 'var(--shield-color)'; }
             else { popupTitle.textContent = '❌ تم إقصاء ❌'; popupTitle.style.color = 'var(--btn-eliminate-bg)';}
             popupName.innerHTML = message;
             document.getElementById('elimination-popup').style.display = 'flex';
         }
 
         function closeEliminationPopup() { document.getElementById('elimination-popup').style.display = 'none'; }
-        
+
         function updateGameInfo() { document.getElementById('active-players-count').textContent = `النشطون: ${activePlayers.length} | المقصيون: ${eliminatedPlayers.length}`; }
 
         function updateEliminatedList() {
             const list = document.getElementById('eliminated-list');
-            list.innerHTML = ''; 
+            list.innerHTML = '';
 
             const reAddOldestBtn = document.getElementById('btn-re-add-oldest');
             if (reAddOldestBtn) {
@@ -564,7 +665,7 @@
                 button.setAttribute('data-player-name', player);
                 button.title = `إعادة إضافة ${player}`;
                 button.textContent = '+';
-                
+
                 const playerLabel = index === 0 ? `💀 ${player} (آخر مقصي)` : `💀 ${player}`;
                 const span = document.createElement('span');
                 span.textContent = playerLabel;
@@ -576,7 +677,7 @@
         }
 
         function getSafePlayerId(playerName) { return `player-id-${playerName.replace(/[^a-zA-Z0-9أ-ي]/g, '_')}`; }
-        
+
         function updateActivePlayersList() {
             const list = document.getElementById('active-players-list');
             list.innerHTML = '';
@@ -598,7 +699,7 @@
             const countElement = document.getElementById(`shield-count-${safeId}`);
             if (countElement) { countElement.textContent = `${newShields} 🛡️`; }
         }
-        
+
         function reAddPlayer(playerName) {
             if (eliminatedPlayers.includes(playerName)) {
                 document.getElementById('sound-re-add')?.play();
@@ -610,23 +711,23 @@
                     document.getElementById('active-players-section').style.display = 'block';
                     document.getElementById('eliminated-section').style.display = 'block';
                 }
-                
+
                 eliminatedPlayers = eliminatedPlayers.filter(p => p !== playerName);
                 activePlayers.push(playerName);
                 playerShields[playerName] = 0;
                 showToast(`تم إعادة ${playerName} للعبة! 🎮`);
-                
+
                 setupGame();
             }
         }
 
         function reAddOldestEliminatedPlayer() {
             if (eliminatedPlayers.length > 0) {
-                const playerToReAdd = eliminatedPlayers[eliminatedPlayers.length - 1]; 
+                const playerToReAdd = eliminatedPlayers[eliminatedPlayers.length - 1];
                 reAddPlayer(playerToReAdd);
             }
         }
-        
+
         document.getElementById('eliminated-list').addEventListener('click', function(event) {
             const target = event.target;
             if (target && target.classList.contains('btn-re-add')) {
@@ -646,11 +747,11 @@
                 if (allPlayers.includes(cleanName)) {
                     showToast("هذا اللاعب موجود بالفعل!"); return;
                 }
-                
+
                 activePlayers.push(cleanName);
                 playerShields[cleanName] = 0;
                 showToast(`أهلاً باللاعب الجديد ${cleanName}!`);
-                
+
                 setupGame();
             }
         }
@@ -676,7 +777,7 @@
                 bombControls.style.display = 'none';
             }
         }
-        
+
         function showWinner(winnerName) {
             const music = document.getElementById('music-bg');
             if (music) music.pause();
@@ -686,7 +787,7 @@
             gameEnded = true;
             document.getElementById('winner-name').textContent = winnerName;
             document.getElementById('winner-screen').style.display = 'flex';
-            
+
             document.getElementById('active-players-section').style.display = 'none';
             document.getElementById('eliminated-section').style.display = 'none';
 
@@ -713,7 +814,7 @@
             }
             musicStarted = false;
             stopCountdown();
-            
+
             if (!isFirstTimeSetup) {
                 const currentPlayers = [...activePlayers, ...eliminatedPlayers];
                 document.getElementById('player-names').value = currentPlayers.join('\n');
@@ -722,21 +823,21 @@
                 document.getElementById('startScreen').classList.add('active');
                 return;
             }
-            
+
             eliminatedPlayers = [];
             fruitAssignments = [];
             playerShields = {};
             activePlayers.forEach(p => playerShields[p] = 0);
-            
-            gameEnded = false; 
-            bombExploded = false; 
-            bombAvailableForPlanting = false; 
+
+            gameEnded = false;
+            bombExploded = false;
+            bombAvailableForPlanting = false;
             randomShieldOnBoard = true;
 
             document.getElementById('bomb-controls').style.display = 'none';
             document.getElementById('startScreen').classList.remove('active');
             document.getElementById('gameScreen').classList.add('active');
-            
+
             setupGame();
         }
 
@@ -762,6 +863,19 @@
             toast.style.opacity = '1';
             setTimeout(() => { toast.style.opacity = '0'; }, 3000);
         }
+
+        // محاولة استئناف الموسيقى لو انطلقت وإيقافها غير متوقعاً (تستدعى عند تفاعل المستخدم)
+        function tryResumeMusic() {
+            if (!musicElement) return;
+            if (!musicStarted) return;
+            if (musicElement.paused && !gameEnded) {
+                musicElement.play().catch(()=>{});
+            }
+        }
+        document.body.addEventListener('click', tryResumeMusic);
+        document.body.addEventListener('touchstart', tryResumeMusic);
+
+        // نهاية السكربت
     </script>
 </body>
 </html>
