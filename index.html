@@ -104,7 +104,7 @@
             font-size: clamp(1.3rem, 4vw, 2rem); font-weight: 800; line-height: 1.1;
             text-shadow: 2px 2px 6px rgba(0,0,0,0.7); flex-shrink: 0; padding: 2px 4px;
         }
-
+        
         .fruit-item::after { /* For Splat Effect */
             content: '💥'; position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -195,7 +195,6 @@
         body.game-active .watermark, body.winner-active .watermark {
             opacity: 1;
         }
-
     </style>
 </head>
 <body class="">
@@ -285,12 +284,10 @@
         function startTheGame() {
             const names = document.getElementById('player-names').value.split('\n').map(name => name.trim()).filter(Boolean);
             if (names.length < 2) { showToast('يجب إدخال اسمين على الأقل!'); return; }
-
             document.getElementById('sound-start')?.play();
             document.body.addEventListener('click', startMusicOnFirstInteraction, { once: true });
-            
             activePlayers = [...names];
-            initialSpecialsPlaced = false; // Reset for new game
+            initialSpecialsPlaced = false;
             playAgain(true); 
         }
 
@@ -301,7 +298,6 @@
             const shuffledPlayers = [...activePlayers].sort(() => Math.random() - 0.5);
             fruitAssignments = [];
             
-            // Original logic: One fruit per active player
             shuffledPlayers.forEach((player, i) => {
                 fruitAssignments.push({
                     id: `item-${i}`, player, fruitName: shuffledFruits[i % shuffledFruits.length],
@@ -309,23 +305,21 @@
                 });
             });
 
-            // One-time specials rule
             if (!initialSpecialsPlaced && activePlayers.length > 6) {
-                const normalSpotsIndexes = fruitAssignments.map((a, i) => i);
+                const availableSpots = fruitAssignments.map((_, i) => i);
                 const placeSpecial = (type) => {
-                    if (normalSpotsIndexes.length > 0) {
-                        const randomIndex = Math.floor(Math.random() * normalSpotsIndexes.length);
-                        const spotIndex = normalSpotsIndexes.splice(randomIndex, 1)[0];
+                    if (availableSpots.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * availableSpots.length);
+                        const spotIndex = availableSpots.splice(randomIndex, 1)[0];
                         fruitAssignments[spotIndex].type = type;
                     }
                 };
                 
                 const numBombs = Math.max(1, Math.floor(activePlayers.length / 7));
                 for (let i = 0; i < numBombs; i++) placeSpecial('bomb');
-                placeSpecial('shield'); // Original random shield
+                placeSpecial('shield');
                 placeSpecial('golden');
                 placeSpecial('generous');
-                
                 initialSpecialsPlaced = true;
             }
 
@@ -408,7 +402,6 @@
             if(eliminatedList.length > 0) message += `تم إقصاء: ${eliminatedList.join(' و ')}`;
             if(savedList.length > 0) message += `${eliminatedList.length > 0 ? '<br>' : ''}تم إنقاذ: ${savedList.join(' و ')}`;
             showEliminationPopup(message || "لم يصب أحد بأذى", 'bomb');
-
             return reshuffleNeeded;
         }
         
@@ -534,7 +527,7 @@
                 activePlayers.push(playerToReAdd);
                 playerShields[playerToReAdd] = playerShields[playerToReAdd] || 0;
                 showToast(`تمت إعادة ${playerToReAdd} للعبة! 🎮`);
-                setupGame(); // Reshuffle board as per original logic
+                setupGame();
             }
         }
 
@@ -548,7 +541,7 @@
                 activePlayers.push(newName.trim());
                 playerShields[newName.trim()] = 0;
                 showToast(`أهلاً باللاعب الجديد ${newName.trim()}!`);
-                setupGame(); // Reshuffle board as per original logic
+                setupGame();
             }
         }
         
@@ -606,4 +599,16 @@
 
         function loadPlayersList() {
             const savedNames = localStorage.getItem('fruitWarPlayers');
-            if (savedNames) { document.getElementById('player-names').value = savedNames; showToast('تم تحميل القائمة!
+            if (savedNames) { document.getElementById('player-names').value = savedNames; showToast('تم تحميل القائمة! 📂'); } 
+            else { showToast('لا توجد قائمة محفوظة!'); }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            toast.textContent = message;
+            setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+        }
+    </script>
+</body>
+</html>
