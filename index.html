@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حرب الفواكه - RONY GAMES</title>
-
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lemonada:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;700;800&display=swap" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
@@ -20,82 +20,91 @@
             --shield-color: #3498db;
             --golden-fruit-color: #f1c40f;
             --generous-fruit-color: #9b59b6;
-            --font-family: 'Lemonada', cursive;
+            --btn-add-bg: #9b59b6;
+            --btn-re-add-special-bg: #1abc9c;
         }
 
         body {
-            font-family: var(--font-family);
-            margin: 0; padding: 10px; text-align: center;
-            color: #fff; min-height: 100vh; overflow-x: hidden;
-            background-color: #ffb8b8;
-            background-image: radial-gradient(circle at 100% 100%, transparent 15px, #ffb8b8 15px, #ffb8b8 20px, transparent 20px), radial-gradient(circle at 0 100%, transparent 15px, #ffb8b8 15px, #ffb8b8 20px, transparent 20px), radial-gradient(circle at 100% 0, transparent 15px, #ffb8b8 15px, #ffb8b8 20px, transparent 25px), radial-gradient(circle at 0 0, transparent 15px, #ffb8b8 15px, #ffb8b8 20px, transparent 20px);
-            background-size: 40px 40px;
+            font-family: 'Changa', sans-serif;
+            background: linear-gradient(-45deg, #ff8c94, #ffcf86, #84fab0, #8fd3f4);
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .watermark {
-            position: fixed; bottom: 10px; right: 15px;
-            font-size: 0.7rem; color: rgba(0, 0, 0, 0.4);
-            font-weight: 700; opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            z-index: 2000; pointer-events: none;
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-        body.game-active .watermark, body.winner-active .watermark { opacity: 1; }
 
         .container {
-            max-width: 1000px; margin: auto;
-            background: rgba(0, 0, 0, 0.35); padding: 15px; border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            max-width: 1000px; margin: auto; background: rgba(0, 0, 0, 0.3);
+            padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        #startScreen h1 {
-            font-size: 3rem; font-weight: 700; color: var(--primary-color);
-            text-shadow: 2px 2px 0px var(--secondary-color), 4px 4px 0px rgba(0,0,0,0.3);
-            margin-bottom: 10px; animation: title-drop 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+        h1 {
+            font-size: 3.5rem; font-weight: 800; color: var(--primary-color);
+            text-shadow: 3px 3px 0px var(--secondary-color), 6px 6px 0px rgba(0,0,0,0.3);
+            margin-bottom: 10px; line-height: 1.2;
         }
-        @keyframes title-drop { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        #startScreen h2 { font-size: 1.5rem; color: #f1c40f; margin-bottom: 15px; }
+
+        h2 { font-size: 1.5rem; color: #f1c40f; margin-bottom: 0; }
 
         .screen { display: none; }
         .screen.active { display: block; }
 
         #player-names {
-            width: 95%; max-width: 400px; height: 150px; margin: 15px auto; padding: 10px;
-            font-size: 1rem; font-family: 'Changa', sans-serif;
-            border-radius: 8px; border: 2px solid #ccc; background-color: #f9f9f9; color: #333;
+            width: 90%; max-width: 500px; height: 200px; margin: 20px auto;
+            padding: 15px; font-size: 1.1rem; font-family: 'Changa', sans-serif;
+            border-radius: 10px; border: 2px solid #ccc; background-color: #f0f0f0;
+            color: #333; display: block;
         }
         
         .btn {
-            padding: 12px 25px; font-size: 1rem; font-family: var(--font-family);
-            font-weight: 700; border-radius: 40px; border: none; cursor: pointer;
+            padding: 15px 30px; font-size: 1.2rem; font-family: 'Changa', sans-serif;
+            font-weight: 700; border-radius: 50px; border: none; cursor: pointer;
             margin: 5px; color: white; transition: all 0.3s ease;
-            text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+        .btn:active { transform: translateY(-1px); }
+
+        .btn-start { background-color: var(--btn-start-bg); font-size: 1.5rem; padding: 20px 40px; }
+        .btn-again { background-color: var(--btn-start-bg); margin-top: 20px; }
 
         #fruit-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 15px; padding: 10px; margin-top: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px; padding: 20px; margin-top: 20px; max-width: 100%;
         }
-        
-        /* REVERTED to original style as requested */
+
         .fruit-item {
             cursor: pointer; text-align: center; padding: 5px; border-radius: 15px;
             background: rgba(255,255,255,0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative; aspect-ratio: 1; display: flex;
             flex-direction: column; align-items: center; justify-content: center;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.2); gap: 0;
         }
+        .fruit-item:hover { transform: scale(1.1); background: rgba(255,255,255,0.3); }
+        .fruit-item.used { transform: scale(0) rotate(360deg); opacity: 0; pointer-events: none; }
+        
         .fruit-emoji {
-            font-size: clamp(3rem, 15vw, 4.5rem); line-height: 0.9; flex-grow: 2;
+            font-size: clamp(4rem, 15vw, 8rem); line-height: 0.9; flex-grow: 2;
             display: flex; align-items: center; justify-content: center;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
         }
         .fruit-name {
-            font-size: clamp(1rem, 4vw, 1.3rem); font-weight: 700; line-height: 1.1;
+            font-size: clamp(1.3rem, 4vw, 2rem); font-weight: 800; line-height: 1.1;
             text-shadow: 2px 2px 6px rgba(0,0,0,0.7); flex-shrink: 0; padding: 2px 4px;
         }
-        
+
         .fruit-item::after { /* For Splat Effect */
             content: '💥'; position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -103,8 +112,26 @@
             transform: scale(0); transition: all 0.3s ease-out; z-index: -1;
         }
         .fruit-item.splat::after { transform: scale(1.2); opacity: 1; z-index: 1; }
-        .fruit-item.used { transform: scale(0) rotate(360deg); opacity: 0; pointer-events: none; }
         
+        @media (max-width: 480px) {
+            .container { padding: 15px; } h1 { font-size: 2.5rem; } h2 { font-size: 1.2rem; }
+            #fruit-grid { gap: 8px; padding: 10px; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); }
+            .fruit-emoji { font-size: 3.5rem; } .fruit-name { font-size: 1.3rem; }
+            .btn { padding: 12px 20px; font-size: 1rem; }
+            .btn-start { font-size: 1.2rem; padding: 15px 25px; }
+        }
+        
+        #active-players-list, #eliminated-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        #eliminated-list li {
+            background: var(--btn-eliminate-bg); color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 1rem; display: flex; align-items: center;
+            gap: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        #active-players-list li {
+            background: rgba(255, 255, 255, 0.1); color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 1rem; display: flex; align-items: center; justify-content: space-between;
+            gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); min-width: 200px;
+        }
+
+        /* NEW Elimination Popup */
         #elimination-popup {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
@@ -118,11 +145,11 @@
             border: 4px solid;
         }
         @keyframes popup-in { 0% { transform: scale(0.5) rotate(-15deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
-        
         .popup-title { font-size: 2rem; font-weight: 700; margin-bottom: 10px; }
         .popup-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 15px; color: #555; }
         .popup-hint { font-size: 0.8rem; color: #aaa; }
-        
+
+        /* NEW Winner Screen */
         #winner-screen {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 4000; justify-content: center; align-items: center; flex-direction: column;
@@ -130,12 +157,9 @@
             background-size: 400% 400%; animation: winner-bg 8s ease infinite; padding: 20px;
         }
         @keyframes winner-bg { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        
         #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        
         .winner-content { text-align: center; transform: scale(0); animation: winner-content-in 0.8s 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         @keyframes winner-content-in { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-        
         #winner-screen h1 { font-size: 3rem; font-weight: 700; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
         #winner-name {
             font-size: 2.5rem; font-weight: 700; color: var(--primary-color);
@@ -144,14 +168,34 @@
         }
         @keyframes winner-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
-        /* Media Queries for Mobile Responsiveness */
-        @media (max-width: 480px) {
-            #startScreen h1 { font-size: 2.5rem; }
-            .popup-title { font-size: 1.8rem; }
-            .popup-name { font-size: 1.3rem; }
-            #winner-screen h1 { font-size: 2.5rem; }
-            #winner-name { font-size: 2.2rem; }
+        #countdown-timer {
+            display: none; position: fixed; top: 20px; left: 50%;
+            transform: translateX(-50%); background-color: #c0392b; color: white;
+            padding: 15px 30px; border-radius: 15px; z-index: 1500; font-size: 1.8rem;
+            font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.4); animation: pulse 1s infinite;
         }
+        @keyframes pulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } 100% { transform: translateX(-50%) scale(1); } }
+        
+        /* NEW Watermark */
+        .watermark {
+            position: fixed;
+            bottom: 10px; right: 15px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            z-index: 2000;
+            pointer-events: none;
+        }
+        body.game-active .watermark, body.winner-active .watermark {
+            opacity: 1;
+        }
+
     </style>
 </head>
 <body class="">
@@ -164,26 +208,26 @@
             <button onclick="savePlayersList()" class="btn" style="background-color: #3498db;">💾 حفظ</button>
             <button onclick="loadPlayersList()" class="btn" style="background-color: #f39c12;">📂 تحميل</button>
         </div>
-        <button onclick="startTheGame()" class="btn" style="background-color: var(--btn-start-bg); font-size: 1.3rem; padding: 15px 30px; margin-top: 10px;">🎮 ابدأ اللعب</button>
+        <button onclick="startTheGame()" class="btn btn-start">🎮 ابدأ اللعب</button>
     </div>
 
     <div id="gameScreen" class="container screen">
-        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px;">
-            <div id="active-players-count" style="font-size: 1rem; font-weight: 700;"></div>
-            <button class="btn" onclick="addNewPlayer()" style="background-color: var(--btn-add-bg); padding: 8px 15px; font-size: 0.9rem;">➕ لاعب</button>
-            <div id="countdown-timer" style="display: none; position: fixed; top: 15px; left: 50%; transform: translateX(-50%); background-color: #c0392b; color: white; padding: 10px 20px; border-radius: 10px; z-index: 1500; font-size: 1.2rem; font-weight: bold;"></div>
+        <div class="game-info" style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px;">
+            <div id="active-players-count" style="font-size: 1.2rem; margin-bottom: 0; font-weight: 700;"></div>
+            <button class="btn" onclick="addNewPlayer()" style="background-color: var(--btn-add-bg); padding: 10px 20px; font-size: 1rem;">➕ إضافة لاعب</button>
+            <div id="countdown-timer"></div>
         </div>
         <div id="fruit-grid"></div>
-        <div style="margin-top: 20px; padding: 15px; border-radius: 10px; background: rgba(52, 152, 219, 0.15); border: 1px solid rgba(52, 152, 219, 0.3);">
+        <div id="active-players-section" style="margin-top: 30px; padding: 20px; border-radius: 15px; background: rgba(52, 152, 219, 0.15); border: 1px solid rgba(52, 152, 219, 0.3);">
             <h2>اللاعبون النشطون 🛡️</h2>
-            <ul id="active-players-list" style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;"></ul>
+            <ul id="active-players-list"></ul>
         </div>
-        <div style="margin-top: 20px; padding: 15px; border-radius: 10px; background: rgba(0,0,0,0.2);">
-            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
-                <h2>المقصيون 👻</h2>
-                <button id="btn-re-add-oldest" class="btn" onclick="reAddOldestEliminatedPlayer()" style="display: none; background-color: var(--btn-re-add-special-bg); padding: 8px 15px; font-size: 0.8rem;">🔄 إعادة</button>
+        <div id="eliminated-section" style="margin-top: 30px; padding: 20px; border-radius: 15px; background: rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;">
+                <h2>اللاعبون المقصيون 👻</h2>
+                <button id="btn-re-add-oldest" class="btn" onclick="reAddOldestEliminatedPlayer()" style="display: none; background-color: var(--btn-re-add-special-bg); padding: 10px 20px; font-size: 1rem;">🔄 إعادة أقدم لاعب</button>
             </div>
-            <ul id="eliminated-list" style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;"></ul>
+            <ul id="eliminated-list"></ul>
         </div>
     </div>
 
@@ -200,11 +244,11 @@
         <div class="winner-content">
             <h1>🏆 الفائز 🏆</h1>
             <h2 id="winner-name"></h2>
-            <button onclick="playAgain()" class="btn" style="font-size: 1.2rem; padding: 12px 25px; margin-top: 15px; background-color:var(--btn-start-bg);">🔄 لعب مرة أخرى</button>
+            <button onclick="playAgain()" class="btn btn-again">🔄 اللعب مرة أخرى</button>
         </div>
     </div>
     
-    <div id="toast" style="position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background-color: #2c3e50; color: white; padding: 10px 15px; border-radius: 15px; z-index: 5000; opacity: 0; transition: opacity 0.5s, transform 0.5s; font-size: 0.9rem;"></div>
+    <div id="toast" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #2c3e50; color: white; padding: 12px 20px; border-radius: 20px; z-index: 5000; opacity: 0; transition: opacity 0.5s; font-size: 1.1rem;"></div>
     <div class="watermark">© RONY GAMES 2025</div>
 
     <audio id="music-bg" src="game.mp3" loop></audio>
@@ -216,12 +260,13 @@
     <audio id="sound-shield" src="protect.mp3" preload="auto"></audio>
     <audio id="sound-countdown" src="countdown.mp3" preload="auto" loop></audio>
     <audio id="sound-re-add" src="return.mp3" preload="auto"></audio>
-
     <script>
         const fruits = [
             'تفاح 🍎', 'موز 🍌', 'برتقال 🍊', 'عنب 🍇', 'فراولة 🍓', 'كرز 🍒', 'أناناس 🍍', 'بطيخ 🍉',
             'خوخ 🍑', 'كمثرى 🍐', 'ليمون 🍋', 'كيوي 🥝', 'مانجو 🥭', 'أفوكادو 🥑', 'جوز الهند 🥥', 'توت 🫐',
-            'بروكلي 🥦', 'جزر 🥕', 'ذرة 🌽', 'طماطم 🍅', 'خيار 🥒', 'فول سوداني 🥜', 'بطاطا حلوة 🍠'
+            'بروكلي 🥦', 'جزر 🥕', 'ذرة 🌽', 'طماطم 🍅', 'خيار 🥒', 'باذنجان 🍆', 'فلفل 🫑', 'بطاطس 🥔',
+            'بصل 🧅', 'ثوم 🧄', 'فطر 🍄', 'فلفل حار 🌶️', 'خس 🥬', 'يقطين 🎃', 'زيتون 🫒', 'شمام 🍈',
+            'فول سوداني 🥜', 'كستناء 🌰', 'بازلاء 🫛', 'زنجبيل 🫚', 'بطاطا حلوة 🍠'
         ];
 
         let activePlayers = [], eliminatedPlayers = [], fruitAssignments = [], countdownInterval = null;
@@ -230,32 +275,41 @@
         let musicStarted = false;
         let initialSpecialsPlaced = false;
 
+        function startMusicOnFirstInteraction() {
+            if (!musicStarted) {
+                const music = document.getElementById('music-bg');
+                if (music) { music.volume = 0.3; music.play().catch(e => {}); musicStarted = true; }
+            }
+        }
+
         function startTheGame() {
             const names = document.getElementById('player-names').value.split('\n').map(name => name.trim()).filter(Boolean);
             if (names.length < 2) { showToast('يجب إدخال اسمين على الأقل!'); return; }
+
             document.getElementById('sound-start')?.play();
             document.body.addEventListener('click', startMusicOnFirstInteraction, { once: true });
+            
             activePlayers = [...names];
-            initialSpecialsPlaced = false;
+            initialSpecialsPlaced = false; // Reset for new game
             playAgain(true); 
         }
 
-        // This function is now ONLY called at the start of a round or when a new player is manually added.
         function setupGame() {
-            stopCountdown();
             const fruitGrid = document.getElementById('fruit-grid');
             fruitGrid.innerHTML = '';
+            const shuffledFruits = [...fruits].sort(() => Math.random() - 0.5);
             const shuffledPlayers = [...activePlayers].sort(() => Math.random() - 0.5);
             fruitAssignments = [];
-
-            const gridSizeFruits = Math.max(activePlayers.length, Math.min(18, fruits.length));
-            const fruitsForGrid = [...fruits].sort(() => Math.random() - 0.5).slice(0, gridSizeFruits);
-
-            fruitsForGrid.forEach((fruitName, i) => {
-                const player = shuffledPlayers[i % shuffledPlayers.length];
-                fruitAssignments.push({ id: `item-${i}`, player, fruitName, type: 'normal', used: false });
+            
+            // Original logic: One fruit per active player
+            shuffledPlayers.forEach((player, i) => {
+                fruitAssignments.push({
+                    id: `item-${i}`, player, fruitName: shuffledFruits[i % shuffledFruits.length],
+                    type: 'normal', used: false
+                });
             });
 
+            // One-time specials rule
             if (!initialSpecialsPlaced && activePlayers.length > 6) {
                 const normalSpotsIndexes = fruitAssignments.map((a, i) => i);
                 const placeSpecial = (type) => {
@@ -265,97 +319,64 @@
                         fruitAssignments[spotIndex].type = type;
                     }
                 };
+                
                 const numBombs = Math.max(1, Math.floor(activePlayers.length / 7));
                 for (let i = 0; i < numBombs; i++) placeSpecial('bomb');
+                placeSpecial('shield'); // Original random shield
                 placeSpecial('golden');
                 placeSpecial('generous');
+                
                 initialSpecialsPlaced = true;
             }
 
+            fruitAssignments.sort(() => Math.random() - 0.5);
             fruitAssignments.forEach(assignment => {
                 const fruitDiv = document.createElement('div');
                 fruitDiv.id = assignment.id;
-                // NO VISUAL INDICATOR FOR SPECIAL FRUITS
-                fruitDiv.className = `fruit-item`; 
+                fruitDiv.className = 'fruit-item';
+                
                 const parts = assignment.fruitName.split(' ');
                 const emoji = parts.pop();
                 const name = parts.join(' ');
+                
                 fruitDiv.innerHTML = `<div class="fruit-emoji">${emoji}</div><div class="fruit-name">${name}</div>`;
                 fruitDiv.onclick = () => selectFruit(assignment);
                 fruitGrid.appendChild(fruitDiv);
             });
-            
             updateAllLists();
         }
-
+        
         function selectFruit(assignment) {
             if (assignment.used || gameEnded) return;
             document.getElementById('sound-click')?.play();
             const fruitDiv = document.getElementById(assignment.id);
             fruitDiv.classList.add('splat');
-
+            
             setTimeout(() => {
                 assignment.used = true;
                 fruitDiv.classList.add('used');
+                let reshuffleNeeded = false;
 
-                // This function no longer reshuffles the board. It only handles the event.
                 switch(assignment.type) {
-                    case 'bomb': handleBomb(assignment); break;
-                    case 'golden': handleGoldenFruit(assignment); break;
-                    case 'generous': handleGenerousFruit(assignment); break;
-                    default: handleNormalFruit(assignment);
+                    case 'bomb': reshuffleNeeded = handleBomb(assignment); break;
+                    case 'shield': reshuffleNeeded = handleShield(assignment); break;
+                    case 'golden': reshuffleNeeded = handleGoldenFruit(assignment); break;
+                    case 'generous': reshuffleNeeded = handleGenerousFruit(assignment); break;
+                    default:
+                        if (processElimination(assignment.player)) {
+                            showEliminationPopup(`تم إنقاذ ${assignment.player}!`, 'shield');
+                            reshuffleNeeded = true;
+                        } else {
+                            showEliminationPopup(assignment.player, 'elimination');
+                        }
                 }
-                
-                checkGameStatus();
+
+                if (reshuffleNeeded) {
+                    setTimeout(setupGame, 1000); 
+                } else {
+                    checkGameStatus();
+                }
             }, 200);
-        }
-
-        function handleNormalFruit(assignment) {
-            if (processElimination(assignment.player)) {
-                showEliminationPopup(`تم إنقاذ ${assignment.player}!`, 'shield');
-            } else {
-                showEliminationPopup(assignment.player, 'elimination');
-            }
-        }
-        
-        function handleGoldenFruit(assignment) {
-            changeShieldCount(assignment.player, 1);
-            showEliminationPopup(`الفاكهة الذهبية أنقذت ${assignment.player} ومنحته درعًا!`, 'golden');
-        }
-
-        function handleGenerousFruit(assignment) {
-            let popupMessage = `أُقصي ${assignment.player}`;
-            processElimination(assignment.player);
-
-            if (eliminatedPlayers.length > 0) {
-                const revivedIndex = Math.floor(Math.random() * eliminatedPlayers.length);
-                const revivedPlayer = eliminatedPlayers.splice(revivedIndex, 1)[0];
-                activePlayers.push(revivedPlayer);
-                playerShields[revivedPlayer] = playerShields[revivedPlayer] || 0;
-                popupMessage += `، لكن كرم الفاكهة أعاد ${revivedPlayer}!`;
-            } else {
-                popupMessage += "، ولم يكن هناك أحد لإعادته.";
-            }
-            showEliminationPopup(popupMessage, 'generous');
-        }
-
-        function handleBomb(assignment) {
-            let savedList = [], eliminatedList = [];
-            
-            if (processElimination(assignment.player)) savedList.push(assignment.player);
-            else eliminatedList.push(assignment.player);
-
-            const potentialVictims = fruitAssignments.filter(a => !a.used && activePlayers.includes(a.player));
-            if (potentialVictims.length > 0) {
-                const additionalVictim = potentialVictims[Math.floor(Math.random() * potentialVictims.length)].player;
-                 if (processElimination(additionalVictim)) savedList.push(additionalVictim);
-                 else eliminatedList.push(additionalVictim);
-            }
-
-            let message = "";
-            if(eliminatedList.length > 0) message += `تم إقصاء: ${eliminatedList.join(' و ')}`;
-            if(savedList.length > 0) message += `${eliminatedList.length > 0 ? '<br>' : ''}تم إنقاذ: ${savedList.join(' و ')}`;
-            showEliminationPopup(message || "لم يصب أحد بأذى!", 'bomb');
         }
 
         function processElimination(playerName) {
@@ -367,6 +388,58 @@
             return false;
         }
 
+        function handleBomb(bombAssignment) {
+            let reshuffleNeeded = false;
+            let savedList = [], eliminatedList = [];
+
+            if (processElimination(bombAssignment.player)) { savedList.push(bombAssignment.player); reshuffleNeeded = true; } 
+            else { eliminatedList.push(bombAssignment.player); }
+
+            const potentialVictims = fruitAssignments.filter(a => !a.used && a.type === 'normal' && activePlayers.includes(a.player));
+            if (potentialVictims.length > 0) {
+                const additionalVictim = potentialVictims[Math.floor(Math.random() * potentialVictims.length)];
+                additionalVictim.used = true;
+                document.getElementById(additionalVictim.id).classList.add('used');
+                if (processElimination(additionalVictim.player)) { savedList.push(additionalVictim.player); reshuffleNeeded = true; }
+                else { eliminatedList.push(additionalVictim.player); }
+            }
+            
+            let message = "";
+            if(eliminatedList.length > 0) message += `تم إقصاء: ${eliminatedList.join(' و ')}`;
+            if(savedList.length > 0) message += `${eliminatedList.length > 0 ? '<br>' : ''}تم إنقاذ: ${savedList.join(' و ')}`;
+            showEliminationPopup(message || "لم يصب أحد بأذى", 'bomb');
+
+            return reshuffleNeeded;
+        }
+        
+        function handleShield(shieldAssignment) {
+            showEliminationPopup(`الدرع العشوائي أنقذ ${shieldAssignment.player}!`, 'shield');
+            return true;
+        }
+
+        function handleGoldenFruit(assignment) {
+            changeShieldCount(assignment.player, 1);
+            showEliminationPopup(`الفاكهة الذهبية أنقذت ${assignment.player} ومنحته درعًا!`, 'golden');
+            return true;
+        }
+
+        function handleGenerousFruit(assignment) {
+            let popupMessage = `أُقصي ${assignment.player}`;
+            processElimination(assignment.player);
+
+            if (eliminatedPlayers.length > 0) {
+                const revivedIndex = Math.floor(Math.random() * eliminatedPlayers.length);
+                const [revivedPlayer] = eliminatedPlayers.splice(revivedIndex, 1);
+                activePlayers.push(revivedPlayer);
+                playerShields[revivedPlayer] = playerShields[revivedPlayer] || 0;
+                popupMessage += `، لكن كرم الفاكهة أعاد ${revivedPlayer}!`;
+            } else {
+                popupMessage += "، ولم يكن هناك أحد لإعادته.";
+            }
+            showEliminationPopup(popupMessage, 'generous');
+            return true;
+        }
+
         function eliminatePlayer(playerName) {
             const index = activePlayers.indexOf(playerName);
             if (index > -1) {
@@ -374,7 +447,7 @@
                 eliminatedPlayers.unshift(playerName);
             }
         }
-        
+
         function checkGameStatus() {
             updateAllLists();
             if (activePlayers.length === 1 && !countdownInterval) startCountdown();
@@ -422,12 +495,7 @@
 
         function closeEliminationPopup() { document.getElementById('elimination-popup').style.display = 'none'; }
         
-        function updateAllLists() {
-            updateGameInfo();
-            updateActivePlayersList();
-            updateEliminatedList();
-        }
-        
+        function updateAllLists() { updateGameInfo(); updateActivePlayersList(); updateEliminatedList(); }
         function updateGameInfo() { document.getElementById('active-players-count').textContent = `النشطون: ${activePlayers.length} | المقصيون: ${eliminatedPlayers.length}`; }
 
         function updateEliminatedList() {
@@ -436,8 +504,7 @@
             document.getElementById('btn-re-add-oldest').style.display = eliminatedPlayers.length > 0 ? 'inline-block' : 'none';
             eliminatedPlayers.forEach(player => {
                 const li = document.createElement('li');
-                li.style.cssText = "background: var(--btn-eliminate-bg); color: #fff; padding: 6px 10px; border-radius: 15px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;";
-                li.innerHTML = `<button onclick="reAddPlayer('${player}')" title="إعادة" style="background-color:var(--btn-re-add-special-bg);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:0.9rem;cursor:pointer;">+</button><span>💀 ${player}</span>`;
+                li.innerHTML = `<button onclick="reAddPlayer('${player}')" title="إعادة" style="background-color:var(--btn-re-add-special-bg);color:white;border:none;border-radius:50%;width:25px;height:25px;font-size:1.1rem;cursor:pointer;margin-left:5px;">+</button><span>💀 ${player}</span>`;
                 list.appendChild(li);
             });
         }
@@ -447,9 +514,8 @@
             list.innerHTML = '';
             [...activePlayers].sort((a,b) => a.localeCompare(b,'ar')).forEach(player => {
                 const li = document.createElement('li');
-                li.style.cssText = "background: rgba(255,255,255,0.1); color: #fff; padding: 6px 10px; border-radius: 15px; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 150px;";
                 const shieldCount = playerShields[player] || 0;
-                li.innerHTML = `<span>${player}</span><div style="display:flex;align-items:center;gap:8px;"><button onclick="changeShieldCount('${player}',-1)" style="background:var(--shield-color);border-radius:50%;width:24px;height:24px;border:none;color:white;cursor:pointer">-</button><span style="font-weight:bold;min-width:30px;">${shieldCount}🛡️</span><button onclick="changeShieldCount('${player}',1)" style="background:var(--shield-color);border-radius:50%;width:24px;height:24px;border:none;color:white;cursor:pointer">+</button></div>`;
+                li.innerHTML = `<span>${player}</span><div style="display:flex;align-items:center;gap:8px;"><button onclick="changeShieldCount('${player}',-1)" style="background:var(--shield-color);border-radius:50%;width:28px;height:28px;border:none;color:white;cursor:pointer;font-size:1.2rem;">-</button><span style="font-weight:bold;min-width:30px;">${shieldCount}🛡️</span><button onclick="changeShieldCount('${player}',1)" style="background:var(--shield-color);border-radius:50%;width:28px;height:28px;border:none;color:white;cursor:pointer;font-size:1.2rem;">+</button></div>`;
                 list.appendChild(li);
             });
         }
@@ -466,8 +532,9 @@
                 document.getElementById('sound-re-add')?.play();
                 const [playerToReAdd] = eliminatedPlayers.splice(playerIdx, 1);
                 activePlayers.push(playerToReAdd);
+                playerShields[playerToReAdd] = playerShields[playerToReAdd] || 0;
                 showToast(`تمت إعادة ${playerToReAdd} للعبة! 🎮`);
-                updateAllLists();
+                setupGame(); // Reshuffle board as per original logic
             }
         }
 
@@ -481,11 +548,9 @@
                 activePlayers.push(newName.trim());
                 playerShields[newName.trim()] = 0;
                 showToast(`أهلاً باللاعب الجديد ${newName.trim()}!`);
-                setupGame(); // Reshuffle board only when a new player is added
+                setupGame(); // Reshuffle board as per original logic
             }
         }
-
-        function updateBombControls() { document.getElementById('bomb-controls').style.display = 'none'; }
         
         function showWinner(winnerName) {
             document.getElementById('music-bg')?.pause();
@@ -499,7 +564,7 @@
             
             const canvas = document.getElementById('confetti-canvas');
             const myConfetti = confetti.create(canvas, { resize: true, useWorker: true });
-            const duration = (winSound?.duration || 5) * 1000;
+            const duration = (winSound?.duration || 8) * 1000;
             const animationEnd = Date.now() + duration;
 
             (function frame() {
@@ -541,16 +606,4 @@
 
         function loadPlayersList() {
             const savedNames = localStorage.getItem('fruitWarPlayers');
-            if (savedNames) { document.getElementById('player-names').value = savedNames; showToast('تم تحميل القائمة! 📂'); } 
-            else { showToast('لا توجد قائمة محفوظة!'); }
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.style.opacity = '1'; toast.style.transform = 'translate(-50%, -10px)';
-            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(-50%)'; }, 3000);
-        }
-    </script>
-</body>
-</html>
+            if (savedNames) { document.getElementById('player-names').value = savedNames; showToast('تم تحميل القائمة!
