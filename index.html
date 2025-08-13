@@ -25,42 +25,26 @@
 
         body {
             font-family: var(--font-family);
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-            color: #fff;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
+            margin: 0; padding: 10px; text-align: center;
+            color: #fff; min-height: 100vh; overflow-x: hidden;
             background-color: #ffb8b8;
-            background-image:
-                radial-gradient(circle at 100% 100%, transparent 20px, #ffb8b8 20px, #ffb8b8 25px, transparent 25px),
-                radial-gradient(circle at 0 100%, transparent 20px, #ffb8b8 20px, #ffb8b8 25px, transparent 25px),
-                radial-gradient(circle at 100% 0, transparent 20px, #ffb8b8 20px, #ffb8b8 25px, transparent 25px),
-                radial-gradient(circle at 0 0, transparent 20px, #ffb8b8 20px, #ffb8b8 25px, transparent 25px);
-            background-size: 50px 50px;
+            background-image: radial-gradient(circle at 100% 100%, transparent 15px, #ffb8b8 15px, #ffb8b8 20px, transparent 20px), radial-gradient(circle at 0 100%, transparent 15px, #ffb8b8 15px, #ffb8b8 20px, transparent 20px), radial-gradient(circle at 100% 0, transparent 15px, #ffb8b8 15px, #ffb8b8 20px, transparent 25px), radial-gradient(circle at 0 0, transparent 15px, #ffb8b8 15px, #ffb8b8 20px, transparent 20px);
+            background-size: 40px 40px;
         }
 
         .watermark {
-            position: fixed;
-            bottom: 10px; right: 15px;
+            position: fixed; bottom: 10px; right: 15px;
             font-size: 0.7rem; color: rgba(0, 0, 0, 0.4);
             font-weight: 700; opacity: 0;
             transition: opacity 0.5s ease-in-out;
             z-index: 2000; pointer-events: none;
         }
-
-        body.game-active .watermark,
-        body.winner-active .watermark {
-            opacity: 1;
-        }
+        body.game-active .watermark, body.winner-active .watermark { opacity: 1; }
 
         .container {
             max-width: 1000px; margin: auto;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px; border-radius: 15px;
+            background: rgba(0, 0, 0, 0.35); padding: 15px; border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         #startScreen h1 {
@@ -69,15 +53,14 @@
             margin-bottom: 10px; animation: title-drop 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
         }
         @keyframes title-drop { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-
         #startScreen h2 { font-size: 1.5rem; color: #f1c40f; margin-bottom: 15px; }
 
         .screen { display: none; }
         .screen.active { display: block; }
 
         #player-names {
-            width: 95%; max-width: 400px; height: 150px; margin: 15px auto;
-            padding: 10px; font-size: 1rem; font-family: 'Changa', sans-serif;
+            width: 95%; max-width: 400px; height: 150px; margin: 15px auto; padding: 10px;
+            font-size: 1rem; font-family: 'Changa', sans-serif;
             border-radius: 8px; border: 2px solid #ccc; background-color: #f9f9f9; color: #333;
         }
         
@@ -91,37 +74,35 @@
 
         #fruit-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-            gap: 10px; padding: 15px; margin-top: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 5px; padding: 5px; margin-top: 15px;
         }
 
         .fruit-item {
-            cursor: pointer; text-align: center; padding: 5px; border-radius: 10px;
+            cursor: pointer; text-align: center; border-radius: 10px;
             background: rgba(255,255,255,0.15); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative; aspect-ratio: 1; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            border: 1px solid rgba(255,255,255,0.2);
+            align-items: stretch; justify-content: stretch; /* Stretch children */
         }
         .fruit-item::after { /* For Splat Effect */
-            content: '💥';
-            position: absolute;
+            content: '💥'; position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            font-size: 5rem;
-            color: #ff6347;
-            opacity: 0;
-            transform: scale(0);
-            transition: all 0.3s ease-out;
-            z-index: -1;
+            font-size: 5rem; color: #ff6347; opacity: 0;
+            transform: scale(0); transition: all 0.3s ease-out; z-index: -1;
         }
-        .fruit-item.splat::after {
-            transform: scale(1.2);
-            opacity: 1;
-            z-index: 1;
-        }
+        .fruit-item.splat::after { transform: scale(1.2); opacity: 1; z-index: 1; }
         .fruit-item.used { transform: scale(0) rotate(360deg); opacity: 0; pointer-events: none; }
         
-        .fruit-emoji { font-size: clamp(2.5rem, 10vw, 4rem); text-shadow: 1px 1px 4px rgba(0,0,0,0.6); }
-        .fruit-name { font-size: clamp(0.8rem, 4vw, 1.2rem); font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.7); }
+        .fruit-emoji {
+            flex-grow: 1; display: flex; align-items: center; justify-content: center;
+            font-size: clamp(3rem, 15vw, 5rem); text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+            line-height: 1;
+        }
+        .fruit-name {
+            background: rgba(0, 0, 0, 0.3);
+            font-size: clamp(0.8rem, 3.5vw, 1.1rem); font-weight: 700;
+            padding: 4px; line-height: 1.1;
+        }
         
         #elimination-popup {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -137,8 +118,8 @@
         }
         @keyframes popup-in { 0% { transform: scale(0.5) rotate(-15deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
         
-        .popup-title { font-size: 2rem; font-weight: 700; margin-bottom: 10px; line-height: 1.2; }
-        .popup-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 15px; line-height: 1.4; color: #555; }
+        .popup-title { font-size: 2rem; font-weight: 700; margin-bottom: 10px; }
+        .popup-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 15px; color: #555; }
         .popup-hint { font-size: 0.8rem; color: #aaa; }
         
         #winner-screen {
@@ -162,12 +143,10 @@
         }
         @keyframes winner-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
-        /* General Mobile Responsiveness */
+        /* Media Queries for Mobile Responsiveness */
         @media (max-width: 480px) {
-            body { padding: 10px; }
-            .container { padding: 15px; }
             #startScreen h1 { font-size: 2.5rem; }
-            #startScreen h2 { font-size: 1.2rem; }
+            #fruit-grid { grid-template-columns: repeat(auto-fit, minmax(85px, 1fr)); }
             .popup-title { font-size: 1.8rem; }
             .popup-name { font-size: 1.3rem; }
             #winner-screen h1 { font-size: 2.5rem; }
@@ -253,6 +232,7 @@
         let gameEnded = false, bombExploded = false, bombAvailableForPlanting = false;
         let playerShields = {};
         let musicStarted = false;
+        let initialSpecialsPlaced = false; // NEW: Flag for one-time special items
 
         function startMusicOnFirstInteraction() {
             if (!musicStarted) {
@@ -261,7 +241,6 @@
                     music.volume = 0.3;
                     music.play().catch(e => console.error("Music play failed:", e));
                     musicStarted = true;
-                    document.body.removeEventListener('click', startMusicOnFirstInteraction);
                 }
             }
         }
@@ -274,42 +253,56 @@
             document.getElementById('sound-start')?.play();
             document.body.addEventListener('click', startMusicOnFirstInteraction, { once: true });
             activePlayers = [...names];
+            initialSpecialsPlaced = false; // Reset the flag for a new game
             playAgain(true); 
         }
 
         function setupGame() {
             const fruitGrid = document.getElementById('fruit-grid');
             fruitGrid.innerHTML = '';
+            
+            // --- NEW LOGIC for Grid Generation ---
             const shuffledFruits = [...fruits].sort(() => Math.random() - 0.5);
             const shuffledPlayers = [...activePlayers].sort(() => Math.random() - 0.5);
             fruitAssignments = [];
-            
-            shuffledPlayers.forEach((player, i) => {
-                fruitAssignments.push({ id: `item-${i}`, player, fruitName: shuffledFruits[i % shuffledFruits.length], type: 'normal', used: false });
+
+            // Determine the number of fruits to show on the grid
+            const gridSizeFruits = Math.max(activePlayers.length, Math.min(15, fruits.length));
+            const fruitsForGrid = shuffledFruits.slice(0, gridSizeFruits);
+
+            fruitsForGrid.forEach((fruitName, i) => {
+                const player = shuffledPlayers[i % shuffledPlayers.length];
+                fruitAssignments.push({ id: `item-${i}`, player, fruitName, type: 'normal', used: false });
             });
+            // --- END NEW LOGIC ---
 
-            if (!bombExploded) {
-                const numBombs = Math.max(1, Math.floor(activePlayers.length / 6));
-                const bombIndices = new Set();
-                while (bombIndices.size < numBombs && bombIndices.size < fruitAssignments.length) {
-                    bombIndices.add(Math.floor(Math.random() * fruitAssignments.length));
+            // --- NEW LOGIC for One-Time Special Items ---
+            if (!initialSpecialsPlaced && activePlayers.length > 6) {
+                const normalSpots = fruitAssignments.map((a, i) => a.type === 'normal' ? i : -1).filter(i => i !== -1);
+                
+                // Add Bombs
+                const numBombs = Math.max(1, Math.floor(activePlayers.length / 7));
+                for (let i = 0; i < numBombs && normalSpots.length > 0; i++) {
+                    const spotIndex = normalSpots.splice(Math.floor(Math.random() * normalSpots.length), 1)[0];
+                    fruitAssignments[spotIndex].type = 'bomb';
                 }
-                bombIndices.forEach(index => fruitAssignments[index].type = 'bomb');
+                
+                // Add Golden Fruit
+                if (normalSpots.length > 0) {
+                    const goldenIndex = normalSpots.splice(Math.floor(Math.random() * normalSpots.length), 1)[0];
+                    fruitAssignments[goldenIndex].type = 'golden';
+                }
+                // Add Generous Fruit
+                if (normalSpots.length > 0) {
+                    const generousIndex = normalSpots.splice(Math.floor(Math.random() * normalSpots.length), 1)[0];
+                    fruitAssignments[generousIndex].type = 'generous';
+                }
+                
+                initialSpecialsPlaced = true; // Set flag so it doesn't run again
             }
-            
-            // Add Special Fruits (Golden & Generous)
-            const normalSpots = fruitAssignments.map((a, i) => a.type === 'normal' ? i : -1).filter(i => i !== -1);
-            if (normalSpots.length > 0) {
-                const goldenIndex = normalSpots.splice(Math.floor(Math.random() * normalSpots.length), 1)[0];
-                fruitAssignments[goldenIndex].type = 'golden';
-            }
-            if (normalSpots.length > 0) {
-                const generousIndex = normalSpots.splice(Math.floor(Math.random() * normalSpots.length), 1)[0];
-                fruitAssignments[generousIndex].type = 'generous';
-            }
+            // --- END NEW LOGIC ---
 
-
-            fruitAssignments.sort(() => Math.random() - 0.5);
+            fruitAssignments.sort(() => Math.random() - 0.5); // Shuffle final grid
             fruitAssignments.forEach(assignment => {
                 const fruitDiv = document.createElement('div');
                 fruitDiv.id = assignment.id;
@@ -319,7 +312,7 @@
                 const emoji = parts.pop();
                 const name = parts.join(' ');
                 
-                fruitDiv.innerHTML = `<div class="fruit-emoji">${assignment.type === 'golden' ? '🌟' : assignment.type === 'generous' ? '🔄' : emoji}</div><div class="fruit-name">${name}</div>`;
+                fruitDiv.innerHTML = `<div class="fruit-emoji">${assignment.type === 'golden' ? '🌟' : assignment.type === 'generous' ? '🔄' : assignment.type === 'bomb' ? '💣' : emoji}</div><div class="fruit-name">${name}</div>`;
                 fruitDiv.onclick = () => selectFruit(assignment);
                 fruitGrid.appendChild(fruitDiv);
             });
@@ -336,11 +329,10 @@
             fruitDiv.classList.add('splat');
 
             setTimeout(() => {
-                assignment.used = true;
-                fruitDiv.classList.add('used');
-                
+                assignment.used = true; fruitDiv.classList.add('used');
                 let reshuffleNeeded = false;
-                if (assignment.type === 'bomb') reshuffleNeeded = handleBomb(assignment);
+
+                if (assignment.type === 'bomb') handleBomb(assignment);
                 else if (assignment.type === 'golden') { handleGoldenFruit(assignment); reshuffleNeeded = true; }
                 else if (assignment.type === 'generous') handleGenerousFruit(assignment);
                 else {
@@ -352,13 +344,11 @@
                         showEliminationPopup(playerName, 'elimination');
                     }
                 }
-                
                 if (reshuffleNeeded) setTimeout(setupGame, 1500); 
                 else checkGameStatus();
-
             }, 200);
         }
-
+        
         function handleGoldenFruit(assignment) {
             const playerName = assignment.player;
             changeShieldCount(playerName, 1);
@@ -371,7 +361,8 @@
             processElimination(eliminatedPlayer);
 
             if (eliminatedPlayers.length > 0) {
-                const revivedPlayer = eliminatedPlayers.splice(Math.floor(Math.random() * eliminatedPlayers.length), 1)[0];
+                const revivedIndex = Math.floor(Math.random() * eliminatedPlayers.length);
+                const revivedPlayer = eliminatedPlayers.splice(revivedIndex, 1)[0];
                 activePlayers.push(revivedPlayer);
                 playerShields[revivedPlayer] = playerShields[revivedPlayer] || 0;
                 popupMessage += `، لكن كرم الفاكهة أعاد ${revivedPlayer}!`;
@@ -381,50 +372,48 @@
             showEliminationPopup(popupMessage, 'generous');
         }
 
+        function handleBomb(assignment) {
+            document.getElementById('sound-bomb')?.play();
+            bombExploded = true; bombAvailableForPlanting = true;
+            let savedList = [], eliminatedList = [];
+            
+            const mainVictim = assignment.player;
+            if (processElimination(mainVictim)) savedList.push(mainVictim);
+            else eliminatedList.push(mainVictim);
+
+            const potentialVictims = fruitAssignments.filter(a => !a.used && a.type === 'normal' && activePlayers.includes(a.player));
+            if (potentialVictims.length > 0) {
+                const additionalVictim = potentialVictims[Math.floor(Math.random() * potentialVictims.length)].player;
+                 if (processElimination(additionalVictim)) savedList.push(additionalVictim);
+                 else eliminatedList.push(additionalVictim);
+            }
+
+            let message = "";
+            if(eliminatedList.length > 0) message += `تم إقصاء: ${eliminatedList.join(' و ')}`;
+            if(savedList.length > 0) message += `${eliminatedList.length > 0 ? '<br>' : ''}تم إنقاذ: ${savedList.join(' و ')}`;
+            showEliminationPopup(message || "لم يصب أحد بأذى!", 'bomb');
+            updateBombControls();
+        }
+
         function processElimination(playerName) {
             if (activePlayers.includes(playerName) && (playerShields[playerName] || 0) > 0) {
                 changeShieldCount(playerName, -1);
                 return true;
-            } else {
-                eliminatePlayer(playerName);
-                return false;
             }
+            eliminatePlayer(playerName);
+            return false;
         }
 
         function eliminatePlayer(playerName) {
-            if (activePlayers.includes(playerName)) {
-                activePlayers = activePlayers.filter(p => p !== playerName);
+            const index = activePlayers.indexOf(playerName);
+            if (index > -1) {
+                activePlayers.splice(index, 1);
                 eliminatedPlayers.unshift(playerName);
             }
         }
         
-        function handleBomb(bombAssignment) {
-            document.getElementById('sound-bomb')?.play();
-            bombExploded = true;
-            bombAvailableForPlanting = true;
-            let reshuffleNeeded = false;
-            const mainVictim = bombAssignment.player;
-            let additionalVictim = null;
-            const potentialVictims = fruitAssignments.filter(a => !a.used && a.type === 'normal' && activePlayers.includes(a.player));
-            if (potentialVictims.length > 0) {
-                additionalVictim = potentialVictims[Math.floor(Math.random() * potentialVictims.length)].player;
-            }
-            let savedList = [], eliminatedList = [];
-            if (processElimination(mainVictim)) { savedList.push(mainVictim); reshuffleNeeded = true; } else { eliminatedList.push(mainVictim); }
-            if (additionalVictim && processElimination(additionalVictim)) { savedList.push(additionalVictim); reshuffleNeeded = true; } else if (additionalVictim) { eliminatedList.push(additionalVictim); }
-            
-            let message = "";
-            if(eliminatedList.length > 0) message += `تم إقصاء: ${eliminatedList.join(' و ')}`;
-            if(savedList.length > 0) message += `${eliminatedList.length > 0 ? '<br>' : ''}تم إنقاذ: ${savedList.join(' و ')}`;
-            showEliminationPopup(message, 'bomb');
-            updateBombControls();
-            return reshuffleNeeded;
-        }
-
         function checkGameStatus() {
-            updateGameInfo(); 
-            updateEliminatedList();
-            updateActivePlayersList();
+            updateGameInfo(); updateEliminatedList(); updateActivePlayersList();
             if (activePlayers.length === 1 && !countdownInterval) startCountdown();
             else if (activePlayers.length <= 0) setTimeout(() => showWinner('لا يوجد فائز!'), 1000);
         }
@@ -447,7 +436,6 @@
                 if (timeLeft <= 0 || activePlayers.length !== 1) {
                     stopCountdown();
                     if (activePlayers.length === 1) showWinner(activePlayers[0]);
-                    else if (activePlayers.length === 0) showWinner('لا يوجد فائز!');
                 }
             }, 1000);
         }
@@ -480,27 +468,29 @@
         
         function updateGameInfo() { document.getElementById('active-players-count').textContent = `النشطون: ${activePlayers.length} | المقصيون: ${eliminatedPlayers.length}`; }
 
+        function updateList(listId, items, renderFunc) {
+            const list = document.getElementById(listId);
+            list.innerHTML = '';
+            items.forEach(item => list.appendChild(renderFunc(item)));
+        }
+
         function updateEliminatedList() {
-            const list = document.getElementById('eliminated-list');
-            list.innerHTML = ''; 
             document.getElementById('btn-re-add-oldest').style.display = eliminatedPlayers.length > 0 ? 'inline-block' : 'none';
-            eliminatedPlayers.forEach((player, index) => {
+            updateList('eliminated-list', eliminatedPlayers, player => {
                 const li = document.createElement('li');
                 li.style.cssText = "background: var(--btn-eliminate-bg); color: #fff; padding: 6px 10px; border-radius: 15px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;";
-                li.innerHTML = `<button class="btn-re-add" data-player-name="${player}" title="إعادة" style="background-color:var(--btn-re-add-special-bg);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:0.9rem;cursor:pointer;">+</button><span>${index === 0 ? `💀 ${player}` : `💀 ${player}`}</span>`;
-                list.appendChild(li);
+                li.innerHTML = `<button onclick="reAddPlayer('${player}')" title="إعادة" style="background-color:var(--btn-re-add-special-bg);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:0.9rem;cursor:pointer;">+</button><span>💀 ${player}</span>`;
+                return li;
             });
         }
         
         function updateActivePlayersList() {
-            const list = document.getElementById('active-players-list');
-            list.innerHTML = '';
-            [...activePlayers].sort((a, b) => a.localeCompare(b, 'ar')).forEach(player => {
+            updateList('active-players-list', [...activePlayers].sort((a,b) => a.localeCompare(b,'ar')), player => {
                 const li = document.createElement('li');
                 li.style.cssText = "background: rgba(255,255,255,0.1); color: #fff; padding: 6px 10px; border-radius: 15px; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 150px;";
                 const shieldCount = playerShields[player] || 0;
-                li.innerHTML = `<span>${player}</span><div style="display:flex;align-items:center;gap:8px;"><button onclick="changeShieldCount('${player}',-1)" style="background-color:var(--shield-color);border-radius:50%;width:24px;height:24px;border:none;color:white;cursor:pointer">-</button><span style="font-weight:bold;min-width:30px;">${shieldCount}🛡️</span><button onclick="changeShieldCount('${player}',1)" style="background-color:var(--shield-color);border-radius:50%;width:24px;height:24px;border:none;color:white;cursor:pointer">+</button></div>`;
-                list.appendChild(li);
+                li.innerHTML = `<span>${player}</span><div style="display:flex;align-items:center;gap:8px;"><button onclick="changeShieldCount('${player}',-1)" style="background:var(--shield-color);border-radius:50%;width:24px;height:24px;border:none;color:white;cursor:pointer">-</button><span style="font-weight:bold;min-width:30px;">${shieldCount}🛡️</span><button onclick="changeShieldCount('${player}',1)" style="background:var(--shield-color);border-radius:50%;width:24px;height:24px;border:none;color:white;cursor:pointer">+</button></div>`;
+                return li;
             });
         }
 
@@ -508,10 +498,6 @@
             playerShields[playerName] = Math.max(0, (playerShields[playerName] || 0) + amount);
             updateActivePlayersList();
         }
-        
-        document.getElementById('eliminated-list').addEventListener('click', (event) => {
-            if (event.target.classList.contains('btn-re-add')) reAddPlayer(event.target.dataset.playerName);
-        });
 
         function reAddPlayer(playerName) {
             const playerIdx = eliminatedPlayers.indexOf(playerName);
@@ -522,14 +508,7 @@
                 activePlayers.push(playerName);
                 playerShields[playerName] = playerShields[playerName] || 0;
                 showToast(`تمت إعادة ${playerName} للعبة! 🎮`);
-                if (gameEnded) {
-                    gameEnded = false;
-                    playAgain(true);
-                } else {
-                    updateGameInfo();
-                    updateActivePlayersList();
-                    updateEliminatedList();
-                }
+                setupGame();
             }
         }
 
@@ -539,9 +518,7 @@
             const newName = prompt("أدخل اسم اللاعب الجديد:");
             if (newName?.trim()) {
                 stopCountdown();
-                if ([...activePlayers, ...eliminatedPlayers].includes(newName.trim())) {
-                    showToast("هذا اللاعب موجود بالفعل!"); return;
-                }
+                if ([...activePlayers, ...eliminatedPlayers].includes(newName.trim())) { showToast("هذا اللاعب موجود بالفعل!"); return; }
                 activePlayers.push(newName.trim());
                 playerShields[newName.trim()] = 0;
                 showToast(`أهلاً باللاعب الجديد ${newName.trim()}!`);
@@ -554,8 +531,7 @@
             const availableItems = fruitAssignments.filter(a => !a.used && a.type === 'normal');
             if (availableItems.length === 0) { showToast('لا توجد أماكن متاحة لزرع القنبلة!'); return; }
             availableItems[Math.floor(Math.random() * availableItems.length)].type = 'bomb';
-            bombAvailableForPlanting = false;
-            updateBombControls();
+            bombAvailableForPlanting = false; updateBombControls();
             showToast('تم زرع قنبلة جديدة بنجاح! 💣');
         }
 
@@ -565,16 +541,13 @@
                 bombControls.style.display = 'block';
                 document.getElementById('plant-bomb-btn').disabled = !bombAvailableForPlanting;
                 document.getElementById('bomb-status').textContent = bombAvailableForPlanting ? 'القنبلة متاحة للزرع!' : 'تم استخدام ميزة الزرع.';
-            } else {
-                bombControls.style.display = 'none';
-            }
+            } else { bombControls.style.display = 'none'; }
         }
         
         function showWinner(winnerName) {
             document.getElementById('music-bg')?.pause();
             stopCountdown();
-            const winSound = document.getElementById('sound-win');
-            winSound?.play();
+            const winSound = document.getElementById('sound-win'); winSound?.play();
             gameEnded = true;
             document.body.className = 'winner-active';
             document.getElementById('winner-name').textContent = winnerName;
@@ -589,15 +562,13 @@
             (function frame() {
                 const timeLeft = animationEnd - Date.now();
                 if (timeLeft <= 0) return;
-                const particleCount = 50 * (timeLeft / duration);
-                myConfetti({ startVelocity: 30, spread: 360, ticks: 60, zIndex: 0, particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } });
+                myConfetti({ startVelocity: 30, spread: 360, ticks: 60, zIndex: 0, particleCount: 50 * (timeLeft / duration), origin: { x: Math.random(), y: Math.random() - 0.2 } });
                 requestAnimationFrame(frame);
             }());
         }
 
         function playAgain(isFirstTimeSetup = false) {
-            document.getElementById('music-bg')?.pause();
-            musicStarted = false;
+            document.getElementById('music-bg')?.pause(); musicStarted = false;
             stopCountdown();
             
             document.body.className = '';
@@ -606,12 +577,9 @@
             document.getElementById('startScreen').classList.add('active');
 
             if (isFirstTimeSetup) {
-                eliminatedPlayers = [];
-                fruitAssignments = [];
-                playerShields = {};
+                eliminatedPlayers = []; playerShields = {};
                 activePlayers.forEach(p => playerShields[p] = 0);
                 gameEnded = false; bombExploded = false; bombAvailableForPlanting = false;
-                document.getElementById('bomb-controls').style.display = 'none';
                 document.getElementById('startScreen').classList.remove('active');
                 document.getElementById('gameScreen').classList.add('active');
                 document.body.classList.add('game-active');
@@ -624,29 +592,21 @@
 
         function savePlayersList() {
             const names = document.getElementById('player-names').value;
-            if (names.trim()) {
-                localStorage.setItem('fruitWarPlayers', names);
-                showToast('تم حفظ القائمة بنجاح! 💾');
-            } else { showToast('لا يوجد أسماء لحفظها!'); }
+            if (names.trim()) { localStorage.setItem('fruitWarPlayers', names); showToast('تم حفظ القائمة بنجاح! 💾'); } 
+            else { showToast('لا يوجد أسماء لحفظها!'); }
         }
 
         function loadPlayersList() {
             const savedNames = localStorage.getItem('fruitWarPlayers');
-            if (savedNames) {
-                document.getElementById('player-names').value = savedNames;
-                showToast('تم تحميل القائمة! 📂');
-            } else { showToast('لا توجد قائمة محفوظة!'); }
+            if (savedNames) { document.getElementById('player-names').value = savedNames; showToast('تم تحميل القائمة! 📂'); } 
+            else { showToast('لا توجد قائمة محفوظة!'); }
         }
 
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
-            toast.style.opacity = '1';
-            toast.style.transform = 'translate(-50%, -10px)';
-            setTimeout(() => { 
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(-50%)';
-            }, 3000);
+            toast.style.opacity = '1'; toast.style.transform = 'translate(-50%, -10px)';
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(-50%)'; }, 3000);
         }
     </script>
 </body>
