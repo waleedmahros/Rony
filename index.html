@@ -370,9 +370,18 @@
         let gameEnded = false, musicStarted = false;
         let playerShields = {};
         
-        let bombExploded = false, bombAvailableForPlanting = false;
-        let goldenFruitUsed = false, generousFruitUsed = false;
-        let randomShieldOnBoard = true;
+        // --- MODIFIED: New state management for special fruits ---
+        let specialFruitsAreEnabled = false;
+        let specialFruitsState = {
+            bomb: { used: false },
+            golden: { used: false },
+            generous: { used: false },
+            shield: { used: false }
+        };
+        // This flag is for the manual bomb planting button only
+        let bombExploded = false; 
+        
+        let bombAvailableForPlanting = false;
 
         function startMusicOnFirstInteraction() {
             if (!musicStarted) {
@@ -396,6 +405,12 @@
             document.body.addEventListener('click', startMusicOnFirstInteraction);
             
             activePlayers = [...names];
+            
+            // --- MODIFIED: One-time check to enable special fruits for the entire game ---
+            if (activePlayers.length >= 6) {
+                specialFruitsAreEnabled = true;
+            }
+
             playAgain(true); 
         }
 
@@ -406,6 +421,7 @@
             const shuffledPlayers = [...activePlayers].sort(() => Math.random() - 0.5);
             fruitAssignments = [];
             
+            // Create initial assignments for all players as 'normal'
             shuffledPlayers.forEach((player, i) => {
                 fruitAssignments.push({
                     id: `item-${i}`, player, fruitName: shuffledFruits[i % shuffledFruits.length],
@@ -413,32 +429,27 @@
                 });
             });
 
-            if (activePlayers.length >= 6) {
-                const placeableSpots = fruitAssignments.filter(a => a.type === 'normal');
+            // --- MODIFIED: New guaranteed placement logic for special fruits ---
+            if (specialFruitsAreEnabled) {
+                const availableNormalAssignments = fruitAssignments.filter(a => a.type === 'normal');
                 
-                if (!bombExploded && placeableSpots.length > 0) {
-                    const spot = placeableSpots.splice(Math.floor(Math.random() * placeableSpots.length), 1)[0];
-                    if (spot) spot.type = 'bomb';
-                }
-                
-                if (!goldenFruitUsed && placeableSpots.length > 0) {
-                    const spot = placeableSpots.splice(Math.floor(Math.random() * placeableSpots.length), 1)[0];
-                    if (spot) spot.type = 'golden';
-                }
+                Object.keys(specialFruitsState).forEach(fruitType => {
+                    // If the fruit hasn't been used and there's a spot for it
+                    if (!specialFruitsState[fruitType].used && availableNormalAssignments.length > 0) {
+                        // Pick a random available spot and convert it
+                        const randomIndex = Math.floor(Math.random() * availableNormalAssignments.length);
+                        const spotToConvert = availableNormalAssignments[randomIndex];
+                        spotToConvert.type = fruitType;
 
-                // --- FIXED: Generous Fruit placement condition ---
-                if (!generousFruitUsed && placeableSpots.length > 0) {
-                    const spot = placeableSpots.splice(Math.floor(Math.random() * placeableSpots.length), 1)[0];
-                    if (spot) spot.type = 'generous';
-                }
-                
-                if (randomShieldOnBoard && placeableSpots.length > 0) {
-                    const spot = placeableSpots.splice(Math.floor(Math.random() * placeableSpots.length), 1)[0];
-                    if (spot) spot.type = 'shield';
-                }
+                        // Remove the converted spot from the list of available spots to avoid re-picking it
+                        availableNormalAssignments.splice(randomIndex, 1);
+                    }
+                });
             }
 
+            // Shuffle the final assignments so special fruits are in random positions
             fruitAssignments.sort(() => Math.random() - 0.5);
+
             fruitAssignments.forEach(assignment => {
                 const fruitDiv = document.createElement('div');
                 fruitDiv.id = assignment.id;
@@ -453,6 +464,7 @@
                 fruitDiv.onclick = () => selectFruit(assignment);
                 fruitGrid.appendChild(fruitDiv);
             });
+
             updateGameInfo(); 
             updateEliminatedList(); 
             updateActivePlayersList();
@@ -482,15 +494,14 @@
                         reshuffleNeeded = handleBomb(assignment);
                         break;
                     case 'shield':
-                        handleShield(assignment);
-                        reshuffleNeeded = true;
+                        reshuffleNeeded = handleShield(assignment);
                         break;
                     case 'golden':
-                        handleGoldenFruit(assignment);
-                        reshuffleNeeded = true;
+                        reshuffleNeeded = handleGoldenFruit(assignment);
                         break;
                     case 'generous':
                         handleGenerousFruit(assignment);
+                        // Reshuffling is handled within this function now
                         break;
                     default: 
                         const playerName = assignment.player;
@@ -513,7 +524,8 @@
 
         function handleBomb(bombAssignment) {
             document.getElementById('sound-bomb')?.play();
-            bombExploded = true;
+            specialFruitsState.bomb.used = true; // Mark as used for the game
+            bombExploded = true; // For manual planting logic
             bombAvailableForPlanting = true;
             let reshuffleNeeded = false;
             let savedList = [], eliminatedListTxt = [];
@@ -526,7 +538,6 @@
             if (potentialVictims.length > 0) {
                 const additionalVictimName = potentialVictims[Math.floor(Math.random() * potentialVictims.length)];
                 
-                // --- FIXED: Find and hide the additional victim's fruit ---
                 const additionalVictimAssignment = fruitAssignments.find(a => a.player === additionalVictimName && !a.used);
                 if(additionalVictimAssignment) {
                     additionalVictimAssignment.used = true;
@@ -550,47 +561,65 @@
         
         function handleShield(shieldAssignment) {
             document.getElementById('sound-shield')?.play();
-            randomShieldOnBoard = false;
+            specialFruitsState.shield.used = true; // Mark as used
             const savedPlayer = shieldAssignment.player;
             showEliminationPopup(`${savedPlayer} نجا هذه المرة بفضل الدرع!`, '🛡️ درع عشوائي 🛡️', 'shield');
+            return true; // Reshuffle needed after a special fruit
         }
 
         function handleGoldenFruit(assignment) {
             document.getElementById('sound-golden')?.play();
-            goldenFruitUsed = true;
+            specialFruitsState.golden.used = true; // Mark as used
             const luckyPlayer = assignment.player;
             changeShieldCount(luckyPlayer, 1);
             showEliminationPopup(`حصل ${luckyPlayer} على درع إضافي!`, '🌟 فاكهة ذهبية 🌟', 'golden');
+            return true; // Reshuffle needed after a special fruit
         }
-
-        // --- FIXED: Generous Fruit Effect Logic ---
+        
+        // --- MODIFIED: Corrected logic for Generous Fruit ---
         function handleGenerousFruit(assignment) {
             document.getElementById('sound-generous')?.play();
-            generousFruitUsed = true;
+            specialFruitsState.generous.used = true; // Mark as used
+
             const unluckyPlayer = assignment.player;
-            
             const wasSaved = processElimination(unluckyPlayer);
             
             let message = '';
             let needsReshuffle = false;
 
+            // Step 1: Determine the fate of the unlucky player and set the message
             if (wasSaved) {
                 message = `🛡️ نجا ${unluckyPlayer} من الإقصاء بفضل الدرع!`;
-                needsReshuffle = true; // Still a special fruit, so reshuffle
+                needsReshuffle = true; // Reshuffle because a shield was used, which is a special event
             } else {
                 message = `تم إقصاء ${unluckyPlayer}.`;
-                if (eliminatedPlayers.length > 0) {
-                    const playerToReAdd = eliminatedPlayers[Math.floor(Math.random() * eliminatedPlayers.length)];
-                    reAddPlayer(playerToReAdd, true);
-                    message += `<br>ولكن كعربون كرم، تمت إعادة ${playerToReAdd} للعبة!`;
-                    // No reshuffle needed here, reAddPlayer handles it.
-                }
             }
+
+            // Step 2: ALWAYS try to bring back an eliminated player, regardless of the outcome of Step 1
+            if (eliminatedPlayers.length > 0) {
+                // Find a player to re-add from the *current* list of eliminated players
+                const playerToReAdd = eliminatedPlayers[Math.floor(Math.random() * eliminatedPlayers.length)];
+                
+                // Re-add the player silently (no extra toast message)
+                reAddPlayer(playerToReAdd, true);
+                
+                // Append to the popup message
+                message += `<br>ولكن كعربون كرم، تمت إعادة ${playerToReAdd} للعبة!`;
+                
+                // Since a player was re-added, a reshuffle is always necessary
+                needsReshuffle = true;
+            }
+            
             showEliminationPopup(message, '🎁 فاكهة كريمة 🎁', 'generous');
+            
+            // Trigger the reshuffle if needed
             if (needsReshuffle) {
                 setTimeout(setupGame, 1500);
+            } else {
+                checkGameStatus(); // Should not happen often here, but as a fallback
             }
         }
+
 
         function eliminatePlayer(playerName) {
             if (activePlayers.includes(playerName)) {
@@ -825,9 +854,14 @@
             activePlayers.forEach(p => playerShields[p] = 0);
             
             gameEnded = false; 
-            bombExploded = false; bombAvailableForPlanting = false;
-            goldenFruitUsed = false; generousFruitUsed = false;
-            randomShieldOnBoard = true;
+            bombExploded = false; 
+            bombAvailableForPlanting = false;
+            
+            // --- MODIFIED: Reset the state for the new game ---
+            Object.keys(specialFruitsState).forEach(key => {
+                specialFruitsState[key].used = false;
+            });
+            // specialFruitsAreEnabled is set only in startTheGame() and persists until a new game starts from the main screen.
 
             document.getElementById('gameScreen').classList.add('active');
             document.getElementById('startScreen').classList.remove('active');
