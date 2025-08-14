@@ -296,8 +296,6 @@
         let gameEnded = false;
         let playerShields = {};
         let musicStarted = false;
-        
-        // NEW State management for persistent specials
         let availableSpecials = [];
         let bombAvailableForPlanting = false;
 
@@ -306,16 +304,12 @@
             if (names.length < 2) { showToast('يجب إدخال اسمين على الأقل!'); return; }
             document.getElementById('sound-start')?.play();
             document.body.addEventListener('click', startMusicOnFirstInteraction, { once: true });
-            
             activePlayers = [...names];
-            
-            // Initialize the "deck" of specials for the entire game
             availableSpecials = [];
             if (activePlayers.length > 6) {
                 availableSpecials = ['bomb', 'shield', 'golden', 'generous'];
             }
             bombAvailableForPlanting = false;
-
             playAgain(true); 
         }
 
@@ -333,7 +327,6 @@
                 });
             });
 
-            // Place any remaining specials from the "deck"
             const availableSpots = fruitAssignments.map((_, i) => i);
             availableSpecials.forEach(specialType => {
                 if (availableSpots.length > 0) {
@@ -348,11 +341,9 @@
                 const fruitDiv = document.createElement('div');
                 fruitDiv.id = assignment.id;
                 fruitDiv.className = 'fruit-item';
-                
                 const parts = assignment.fruitName.split(' ');
                 const emoji = parts.pop();
                 const name = parts.join(' ');
-                
                 fruitDiv.innerHTML = `<div class="fruit-emoji">${emoji}</div><div class="fruit-name">${name}</div>`;
                 fruitDiv.onclick = () => selectFruit(assignment);
                 fruitGrid.appendChild(fruitDiv);
@@ -372,7 +363,6 @@
                 fruitDiv.classList.add('used');
                 let reshuffleNeeded = false;
 
-                // Remove special from deck if it exists
                 const specialIndex = availableSpecials.indexOf(assignment.type);
                 if (specialIndex > -1) {
                     availableSpecials.splice(specialIndex, 1);
@@ -410,13 +400,11 @@
         }
 
         function handleBomb(bombAssignment) {
-            bombAvailableForPlanting = true; // Activate the button
+            bombAvailableForPlanting = true;
             let reshuffleNeeded = false;
             let savedList = [], eliminatedList = [];
-
             if (processElimination(bombAssignment.player)) { savedList.push(bombAssignment.player); reshuffleNeeded = true; } 
             else { eliminatedList.push(bombAssignment.player); }
-
             const potentialVictims = fruitAssignments.filter(a => !a.used && a.type === 'normal' && activePlayers.includes(a.player));
             if (potentialVictims.length > 0) {
                 const additionalVictim = potentialVictims[Math.floor(Math.random() * potentialVictims.length)];
@@ -425,7 +413,6 @@
                 if (processElimination(additionalVictim.player)) { savedList.push(additionalVictim.player); reshuffleNeeded = true; }
                 else { eliminatedList.push(additionalVictim.player); }
             }
-            
             let message = "";
             if(eliminatedList.length > 0) message += `تم إقصاء: ${eliminatedList.join(' و ')}`;
             if(savedList.length > 0) message += `${eliminatedList.length > 0 ? '<br>' : ''}تم إنقاذ: ${savedList.join(' و ')}`;
@@ -447,10 +434,8 @@
         function handleGenerousFruit(assignment) {
             let popupMessage = `أُقصي ${assignment.player}`;
             processElimination(assignment.player);
-
             if (eliminatedPlayers.length > 0) {
-                const revivedIndex = Math.floor(Math.random() * eliminatedPlayers.length);
-                const [revivedPlayer] = eliminatedPlayers.splice(revivedIndex, 1);
+                const [revivedPlayer] = eliminatedPlayers.splice(Math.floor(Math.random() * eliminatedPlayers.length), 1);
                 activePlayers.push(revivedPlayer);
                 playerShields[revivedPlayer] = playerShields[revivedPlayer] || 0;
                 popupMessage += `، لكن كرم الفاكهة أعاد ${revivedPlayer}!`;
@@ -574,13 +559,11 @@
         }
 
         function plantNewBomb() {
-            if (!bombAvailableForPlanting) return;
+            if (!bombAvailableForPlanting) { showToast('لا يمكن زرع قنبلة الآن.'); return; }
             const availableItems = fruitAssignments.filter(a => !a.used && a.type === 'normal');
             if (availableItems.length === 0) { showToast('لا توجد أماكن متاحة لزرع القنبلة!'); return; }
             
-            const randomIndex = Math.floor(Math.random() * availableItems.length);
-            const randomAssignment = availableItems[randomIndex];
-            // Find the original assignment in the main array to modify its type
+            const randomAssignment = availableItems[Math.floor(Math.random() * availableItems.length)];
             const assignmentToUpdate = fruitAssignments.find(a => a.id === randomAssignment.id);
             if (assignmentToUpdate) {
                 assignmentToUpdate.type = 'bomb';
@@ -591,11 +574,18 @@
             showToast('تم زرع قنبلة جديدة بنجاح! 💣');
         }
 
+        // FIXED: Safe version of the function
         function updateBombControls() {
             const bombControls = document.getElementById('bomb-controls');
-            bombControls.style.display = 'block';
-            document.getElementById('plant-bomb-btn').disabled = !bombAvailableForPlanting;
-            document.getElementById('bomb-status').textContent = bombAvailableForPlanting ? 'القنبلة متاحة للزرع!' : 'تم استخدام ميزة الزرع.';
+            if(bombControls) {
+                bombControls.style.display = 'block';
+                const btn = document.getElementById('plant-bomb-btn');
+                const status = document.getElementById('bomb-status');
+                if (btn && status) {
+                    btn.disabled = !bombAvailableForPlanting;
+                    status.textContent = bombAvailableForPlanting ? 'القنبلة متاحة للزرع!' : 'انتظر حتى تنفجر قنبلة أخرى.';
+                }
+            }
         }
         
         function showWinner(winnerName) {
