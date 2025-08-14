@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حرب الفواكه - إصدار القنابل والدرع</title>
+    <title>حرب الفواكه - RONY GAMES</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,9 +51,8 @@
             position: relative;
         }
 
-        /* --- FIXED: Watermark --- */
         #watermark {
-            position: fixed; /* Changed to fixed */
+            position: fixed;
             bottom: 10px;
             right: 15px;
             background-color: rgba(0, 0, 0, 0.5);
@@ -62,7 +61,7 @@
             border-radius: 5px;
             font-size: 0.8rem;
             font-weight: 700;
-            z-index: 5000; /* High z-index to stay on top */
+            z-index: 5000;
             user-select: none;
         }
 
@@ -290,7 +289,7 @@
     
     <div id="startScreen" class="container screen active">
         <h1>🍎 حرب الفواكه 🍊</h1>
-        <h2>مع روني</h2>
+        <h2>مع RONY GAMES</h2>
         <textarea id="player-names" placeholder="أضف أسماء اللاعبين هنا، كل اسم في سطر جديد..."></textarea>
         <div>
             <button onclick="savePlayersList()" class="btn btn-save">💾 حفظ</button>
@@ -359,10 +358,9 @@
     <audio id="sound-generous" src="generous.mp3" preload="auto"></audio>
     
     <script>
-        // --- FIXED: Replaced problematic emojis with more compatible ones ---
         const fruits = [
             'تفاح 🍎', 'موز 🍌', 'برتقال 🍊', 'عنب 🍇', 'فراولة 🍓', 'كرز 🍒', 'أناناس 🍍', 'بطيخ 🍉',
-            'خوخ 🍑', 'كمثرى 🍐', 'ليمون 🍋', 'كيوي 🥝', 'مانجو 🥭', 'أفوكادو 🥑', 'جوز الهند 🥥', 'توت 🫐',
+            'خوخ 🍑', 'كمثرى 🍐', 'ليمون 🍋', 'كيوي 🥝', 'مانجو 🥭', 'أفوكادو 🥑', 'جوز الهند 🥥', 'توت أزرق 🫐',
             'بروكلي 🥦', 'جزر 🥕', 'ذرة 🌽', 'طماطم 🍅', 'خيار 🥒', 'باذنجان 🍆', 'فلفل 🌶️', 'بطاطس 🥔',
             'بصل 🧅', 'ثوم 🧄', 'فطر 🍄', 'فلفل أخضر 🫑', 'خس 🥬', 'يقطين 🎃', 'زيتون 🫒', 'شمام 🍈',
             'فول سوداني 🥜', 'كستناء 🌰', 'فلفل حار 🌶️', 'زنجبيل 🫚', 'بطاطا حلوة 🍠'
@@ -397,9 +395,6 @@
             document.getElementById('sound-start')?.play();
             document.body.addEventListener('click', startMusicOnFirstInteraction);
             
-            document.getElementById('active-players-section').style.display = 'block';
-            document.getElementById('eliminated-section').style.display = 'block';
-
             activePlayers = [...names];
             playAgain(true); 
         }
@@ -431,7 +426,8 @@
                     if (spot) spot.type = 'golden';
                 }
 
-                if (!generousFruitUsed && eliminatedPlayers.length > 0 && placeableSpots.length > 0) {
+                // --- FIXED: Generous Fruit placement condition ---
+                if (!generousFruitUsed && placeableSpots.length > 0) {
                     const spot = placeableSpots.splice(Math.floor(Math.random() * placeableSpots.length), 1)[0];
                     if (spot) spot.type = 'generous';
                 }
@@ -515,29 +511,34 @@
             }, 600);
         }
 
-        // --- FIXED: Bomb logic to eliminate a second random player ---
         function handleBomb(bombAssignment) {
             document.getElementById('sound-bomb')?.play();
             bombExploded = true;
             bombAvailableForPlanting = true;
             let reshuffleNeeded = false;
-            let savedList = [], eliminatedList = [];
+            let savedList = [], eliminatedListTxt = [];
 
-            // Victim 1: The player who was on the bomb card
             const mainVictim = bombAssignment.player;
             if (processElimination(mainVictim)) { savedList.push(mainVictim); } 
-            else { eliminatedList.push(mainVictim); }
+            else { eliminatedListTxt.push(mainVictim); }
 
-            // Victim 2: A random active player
             const potentialVictims = activePlayers.filter(p => p !== mainVictim);
             if (potentialVictims.length > 0) {
-                const additionalVictim = potentialVictims[Math.floor(Math.random() * potentialVictims.length)];
-                if (processElimination(additionalVictim)) { savedList.push(additionalVictim); }
-                else { eliminatedList.push(additionalVictim); }
+                const additionalVictimName = potentialVictims[Math.floor(Math.random() * potentialVictims.length)];
+                
+                // --- FIXED: Find and hide the additional victim's fruit ---
+                const additionalVictimAssignment = fruitAssignments.find(a => a.player === additionalVictimName && !a.used);
+                if(additionalVictimAssignment) {
+                    additionalVictimAssignment.used = true;
+                    document.getElementById(additionalVictimAssignment.id).classList.add('used');
+                }
+                
+                if (processElimination(additionalVictimName)) { savedList.push(additionalVictimName); }
+                else { eliminatedListTxt.push(additionalVictimName); }
             }
             
             let message = "💣 قنبلة! 💥";
-            if (eliminatedList.length > 0) message += `<br>تم إقصاء: ${eliminatedList.join(' و ')}`;
+            if (eliminatedListTxt.length > 0) message += `<br>تم إقصاء: ${eliminatedListTxt.join(' و ')}`;
             if (savedList.length > 0) {
                 message += `<br>تم إنقاذ: ${savedList.join(' و ')} بالدرع`;
                 reshuffleNeeded = true;
@@ -562,24 +563,33 @@
             showEliminationPopup(`حصل ${luckyPlayer} على درع إضافي!`, '🌟 فاكهة ذهبية 🌟', 'golden');
         }
 
+        // --- FIXED: Generous Fruit Effect Logic ---
         function handleGenerousFruit(assignment) {
             document.getElementById('sound-generous')?.play();
             generousFruitUsed = true;
             const unluckyPlayer = assignment.player;
+            
             const wasSaved = processElimination(unluckyPlayer);
             
-            let message = wasSaved ? `🛡️ نجا ${unluckyPlayer} من الإقصاء!` : `تم إقصاء ${unluckyPlayer}.`;
+            let message = '';
+            let needsReshuffle = false;
 
-            if (eliminatedPlayers.length > 0) {
-                // Find a player to re-add who is not the one just eliminated
-                const reAddCandidates = eliminatedPlayers.filter(p => p !== unluckyPlayer);
-                if (reAddCandidates.length > 0) {
-                    const playerToReAdd = reAddCandidates[Math.floor(Math.random() * reAddCandidates.length)];
-                    reAddPlayer(playerToReAdd, true); 
-                    message += `<br>ولكن تمت إعادة ${playerToReAdd} للعبة!`;
+            if (wasSaved) {
+                message = `🛡️ نجا ${unluckyPlayer} من الإقصاء بفضل الدرع!`;
+                needsReshuffle = true; // Still a special fruit, so reshuffle
+            } else {
+                message = `تم إقصاء ${unluckyPlayer}.`;
+                if (eliminatedPlayers.length > 0) {
+                    const playerToReAdd = eliminatedPlayers[Math.floor(Math.random() * eliminatedPlayers.length)];
+                    reAddPlayer(playerToReAdd, true);
+                    message += `<br>ولكن كعربون كرم، تمت إعادة ${playerToReAdd} للعبة!`;
+                    // No reshuffle needed here, reAddPlayer handles it.
                 }
             }
             showEliminationPopup(message, '🎁 فاكهة كريمة 🎁', 'generous');
+            if (needsReshuffle) {
+                setTimeout(setupGame, 1500);
+            }
         }
 
         function eliminatePlayer(playerName) {
@@ -819,8 +829,8 @@
             goldenFruitUsed = false; generousFruitUsed = false;
             randomShieldOnBoard = true;
 
-            document.getElementById('startScreen').classList.remove('active');
             document.getElementById('gameScreen').classList.add('active');
+            document.getElementById('startScreen').classList.remove('active');
             
             setupGame();
         }
