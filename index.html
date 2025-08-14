@@ -296,6 +296,7 @@
         let gameEnded = false;
         let playerShields = {};
         let musicStarted = false;
+        
         let availableSpecials = [];
         let bombAvailableForPlanting = false;
 
@@ -304,12 +305,15 @@
             if (names.length < 2) { showToast('يجب إدخال اسمين على الأقل!'); return; }
             document.getElementById('sound-start')?.play();
             document.body.addEventListener('click', startMusicOnFirstInteraction, { once: true });
+            
             activePlayers = [...names];
+            
             availableSpecials = [];
             if (activePlayers.length > 6) {
                 availableSpecials = ['bomb', 'shield', 'golden', 'generous'];
             }
             bombAvailableForPlanting = false;
+
             playAgain(true); 
         }
 
@@ -341,9 +345,11 @@
                 const fruitDiv = document.createElement('div');
                 fruitDiv.id = assignment.id;
                 fruitDiv.className = 'fruit-item';
+                
                 const parts = assignment.fruitName.split(' ');
                 const emoji = parts.pop();
                 const name = parts.join(' ');
+                
                 fruitDiv.innerHTML = `<div class="fruit-emoji">${emoji}</div><div class="fruit-name">${name}</div>`;
                 fruitDiv.onclick = () => selectFruit(assignment);
                 fruitGrid.appendChild(fruitDiv);
@@ -577,13 +583,13 @@
         // FIXED: Safe version of the function
         function updateBombControls() {
             const bombControls = document.getElementById('bomb-controls');
-            if(bombControls) {
-                bombControls.style.display = 'block';
+            if (bombControls) {
+                bombControls.style.display = bombAvailableForPlanting ? 'block' : 'none';
                 const btn = document.getElementById('plant-bomb-btn');
                 const status = document.getElementById('bomb-status');
                 if (btn && status) {
                     btn.disabled = !bombAvailableForPlanting;
-                    status.textContent = bombAvailableForPlanting ? 'القنبلة متاحة للزرع!' : 'انتظر حتى تنفجر قنبلة أخرى.';
+                    status.textContent = bombAvailableForPlanting ? 'القنبلة متاحة للزرع!' : '';
                 }
             }
         }
