@@ -296,7 +296,14 @@
         let gameEnded = false;
         let playerShields = {};
         let musicStarted = false;
-        
+        function startMusicOnFirstInteraction() {
+    const bgMusic = document.getElementById('music-bg');
+    if (bgMusic && !musicStarted) {
+        bgMusic.play().catch(e => console.error("Error playing music:", e));
+        musicStarted = true;
+    }
+}
+
         let availableSpecials = [];
         let bombAvailableForPlanting = false;
 
