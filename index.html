@@ -20,14 +20,13 @@
             --shield-color: #3498db;
             --btn-add-bg: #9b59b6;
             --btn-re-add-special-bg: #1abc9c;
-            /* New Colors for Popups */
             --golden-color: #f1c40f;
             --generous-color: #9b59b6;
             --popup-bg: rgba(44, 62, 80, 0.95);
         }
 
         body {
-            font-family: 'Changa', sans-serif;
+            font-family: 'Changa', "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
             background: linear-gradient(-45deg, #ff8c94, #ffcf86, #84fab0, #8fd3f4);
             background-size: 400% 400%;
             animation: gradient-animation 15s ease infinite;
@@ -52,9 +51,9 @@
             position: relative;
         }
 
-        /* --- NEW: Watermark --- */
+        /* --- FIXED: Watermark --- */
         #watermark {
-            position: absolute;
+            position: fixed; /* Changed to fixed */
             bottom: 10px;
             right: 15px;
             background-color: rgba(0, 0, 0, 0.5);
@@ -63,7 +62,7 @@
             border-radius: 5px;
             font-size: 0.8rem;
             font-weight: 700;
-            z-index: 10;
+            z-index: 5000; /* High z-index to stay on top */
             user-select: none;
         }
 
@@ -175,7 +174,6 @@
         .shield-controls button:hover { background-color: #2980b9; transform: scale(1.1); }
         .shield-controls span { font-weight: bold; min-width: 40px; text-align: center; }
         
-        /* --- MODIFIED: Popup System --- */
         #elimination-popup {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center;
@@ -205,7 +203,6 @@
         .popup-title { font-size: 2.5rem; margin-bottom: 20px; }
         .popup-name { font-size: 1.8rem; margin-bottom: 20px; line-height: 1.6; }
         .popup-hint { font-size: 0.9rem; color: #ccc; margin-top: 30px; }
-        /* Popup variations */
         .popup-content.elimination { border-color: var(--btn-eliminate-bg); }
         .popup-content.elimination .popup-title { color: var(--btn-eliminate-bg); }
         .popup-content.bomb { border-color: var(--btn-eliminate-bg); }
@@ -217,7 +214,6 @@
         .popup-content.generous { border-color: var(--generous-color); }
         .popup-content.generous .popup-title { color: var(--generous-color); }
         
-        /* --- MODIFIED: Winner Screen --- */
         #winner-screen {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center;
@@ -265,7 +261,7 @@
         @keyframes pulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } 100% { transform: translateX(-50%) scale(1); } }
         
         #toast {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
             background-color: #2c3e50; color: white; padding: 12px 20px;
             border-radius: 20px; z-index: 3000; opacity: 0;
             transition: opacity 0.5s, transform 0.5s;
@@ -290,10 +286,11 @@
     </style>
 </head>
 <body>
+    <div id="watermark">RONY GAMES</div>
     
     <div id="startScreen" class="container screen active">
         <h1>🍎 حرب الفواكه 🍊</h1>
-        <h2>مع RONY GAMES</h2>
+        <h2>مع روني</h2>
         <textarea id="player-names" placeholder="أضف أسماء اللاعبين هنا، كل اسم في سطر جديد..."></textarea>
         <div>
             <button onclick="savePlayersList()" class="btn btn-save">💾 حفظ</button>
@@ -303,7 +300,6 @@
     </div>
 
     <div id="gameScreen" class="container screen">
-        <div id="watermark">RONY GAMES</div>
         <div class="game-info">
             <div class="active-players" id="active-players-count"></div>
             <button class="btn btn-add-player" onclick="addNewPlayer()">➕ إضافة لاعب</button>
@@ -363,19 +359,19 @@
     <audio id="sound-generous" src="generous.mp3" preload="auto"></audio>
     
     <script>
+        // --- FIXED: Replaced problematic emojis with more compatible ones ---
         const fruits = [
             'تفاح 🍎', 'موز 🍌', 'برتقال 🍊', 'عنب 🍇', 'فراولة 🍓', 'كرز 🍒', 'أناناس 🍍', 'بطيخ 🍉',
             'خوخ 🍑', 'كمثرى 🍐', 'ليمون 🍋', 'كيوي 🥝', 'مانجو 🥭', 'أفوكادو 🥑', 'جوز الهند 🥥', 'توت 🫐',
-            'بروكلي 🥦', 'جزر 🥕', 'ذرة 🌽', 'طماطم 🍅', 'خيار 🥒', 'باذنجان 🍆', 'فلفل 🫑', 'بطاطس 🥔',
-            'بصل 🧅', 'ثوم 🧄', 'فطر 🍄', 'فلفل حار 🌶️', 'خس 🥬', 'يقطين 🎃', 'زيتون 🫒', 'شمام 🍈',
-            'فول سوداني 🥜', 'كستناء 🌰', 'بازلاء 🫛', 'زنجبيل 🫚', 'بطاطا حلوة 🍠'
+            'بروكلي 🥦', 'جزر 🥕', 'ذرة 🌽', 'طماطم 🍅', 'خيار 🥒', 'باذنجان 🍆', 'فلفل 🌶️', 'بطاطس 🥔',
+            'بصل 🧅', 'ثوم 🧄', 'فطر 🍄', 'فلفل أخضر 🫑', 'خس 🥬', 'يقطين 🎃', 'زيتون 🫒', 'شمام 🍈',
+            'فول سوداني 🥜', 'كستناء 🌰', 'فلفل حار 🌶️', 'زنجبيل 🫚', 'بطاطا حلوة 🍠'
         ];
 
         let activePlayers = [], eliminatedPlayers = [], fruitAssignments = [], countdownInterval = null;
         let gameEnded = false, musicStarted = false;
         let playerShields = {};
         
-        // --- NEW: State flags for special items ---
         let bombExploded = false, bombAvailableForPlanting = false;
         let goldenFruitUsed = false, generousFruitUsed = false;
         let randomShieldOnBoard = true;
@@ -422,34 +418,27 @@
                 });
             });
 
-            // --- MODIFIED: Special items placement logic ---
-            const availableSpots = fruitAssignments.filter(a => a.type === 'normal');
             if (activePlayers.length >= 6) {
-                // 1. Place one Bomb
-                if (!bombExploded && availableSpots.length > 0) {
-                    const bombSpotIndex = Math.floor(Math.random() * availableSpots.length);
-                    availableSpots[bombSpotIndex].type = 'bomb';
-                    availableSpots.splice(bombSpotIndex, 1);
+                const placeableSpots = fruitAssignments.filter(a => a.type === 'normal');
+                
+                if (!bombExploded && placeableSpots.length > 0) {
+                    const spot = placeableSpots.splice(Math.floor(Math.random() * placeableSpots.length), 1)[0];
+                    if (spot) spot.type = 'bomb';
                 }
                 
-                // 2. Place one Golden Fruit
-                if (!goldenFruitUsed && availableSpots.length > 0) {
-                    const goldenSpotIndex = Math.floor(Math.random() * availableSpots.length);
-                    availableSpots[goldenSpotIndex].type = 'golden';
-                    availableSpots.splice(goldenSpotIndex, 1);
+                if (!goldenFruitUsed && placeableSpots.length > 0) {
+                    const spot = placeableSpots.splice(Math.floor(Math.random() * placeableSpots.length), 1)[0];
+                    if (spot) spot.type = 'golden';
                 }
 
-                // 3. Place one Generous Fruit
-                if (!generousFruitUsed && eliminatedPlayers.length > 0 && availableSpots.length > 0) {
-                    const generousSpotIndex = Math.floor(Math.random() * availableSpots.length);
-                    availableSpots[generousSpotIndex].type = 'generous';
-                    availableSpots.splice(generousSpotIndex, 1);
+                if (!generousFruitUsed && eliminatedPlayers.length > 0 && placeableSpots.length > 0) {
+                    const spot = placeableSpots.splice(Math.floor(Math.random() * placeableSpots.length), 1)[0];
+                    if (spot) spot.type = 'generous';
                 }
                 
-                // 4. Place one random Shield
-                if (randomShieldOnBoard && availableSpots.length > 0) {
-                    const shieldSpotIndex = Math.floor(Math.random() * availableSpots.length);
-                    availableSpots[shieldSpotIndex].type = 'shield';
+                if (randomShieldOnBoard && placeableSpots.length > 0) {
+                    const spot = placeableSpots.splice(Math.floor(Math.random() * placeableSpots.length), 1)[0];
+                    if (spot) spot.type = 'shield';
                 }
             }
 
@@ -471,16 +460,16 @@
             updateGameInfo(); 
             updateEliminatedList(); 
             updateActivePlayersList();
-            updateBombControls(); // Call this to set button state based on player count
+            updateBombControls();
         }
 
         function processElimination(playerName) {
             if (activePlayers.includes(playerName) && (playerShields[playerName] || 0) > 0) {
                 changeShieldCount(playerName, -1);
-                return true; // Was saved
+                return true; 
             } else {
                 eliminatePlayer(playerName);
-                return false; // Was eliminated
+                return false; 
             }
         }
 
@@ -506,9 +495,8 @@
                         break;
                     case 'generous':
                         handleGenerousFruit(assignment);
-                        // Reshuffle is handled by reAddPlayer inside the handler
                         break;
-                    default: // normal
+                    default: 
                         const playerName = assignment.player;
                         const wasSaved = processElimination(playerName);
                         if (wasSaved) {
@@ -527,17 +515,27 @@
             }, 600);
         }
 
+        // --- FIXED: Bomb logic to eliminate a second random player ---
         function handleBomb(bombAssignment) {
             document.getElementById('sound-bomb')?.play();
             bombExploded = true;
             bombAvailableForPlanting = true;
             let reshuffleNeeded = false;
             let savedList = [], eliminatedList = [];
-            const mainVictim = bombAssignment.player;
 
+            // Victim 1: The player who was on the bomb card
+            const mainVictim = bombAssignment.player;
             if (processElimination(mainVictim)) { savedList.push(mainVictim); } 
             else { eliminatedList.push(mainVictim); }
 
+            // Victim 2: A random active player
+            const potentialVictims = activePlayers.filter(p => p !== mainVictim);
+            if (potentialVictims.length > 0) {
+                const additionalVictim = potentialVictims[Math.floor(Math.random() * potentialVictims.length)];
+                if (processElimination(additionalVictim)) { savedList.push(additionalVictim); }
+                else { eliminatedList.push(additionalVictim); }
+            }
+            
             let message = "💣 قنبلة! 💥";
             if (eliminatedList.length > 0) message += `<br>تم إقصاء: ${eliminatedList.join(' و ')}`;
             if (savedList.length > 0) {
@@ -556,7 +554,6 @@
             showEliminationPopup(`${savedPlayer} نجا هذه المرة بفضل الدرع!`, '🛡️ درع عشوائي 🛡️', 'shield');
         }
 
-        // --- NEW: Handlers for new fruits ---
         function handleGoldenFruit(assignment) {
             document.getElementById('sound-golden')?.play();
             goldenFruitUsed = true;
@@ -571,17 +568,16 @@
             const unluckyPlayer = assignment.player;
             const wasSaved = processElimination(unluckyPlayer);
             
-            let message = '';
-            if (wasSaved) {
-                message = `🛡️ نجا ${unluckyPlayer} من الإقصاء!`;
-            } else {
-                message = `تم إقصاء ${unluckyPlayer}.`;
-            }
+            let message = wasSaved ? `🛡️ نجا ${unluckyPlayer} من الإقصاء!` : `تم إقصاء ${unluckyPlayer}.`;
 
             if (eliminatedPlayers.length > 0) {
-                const playerToReAdd = eliminatedPlayers[Math.floor(Math.random() * eliminatedPlayers.length)];
-                reAddPlayer(playerToReAdd, true); // silent re-add, no toast
-                message += `<br>ولكن تمت إعادة ${playerToReAdd} للعبة!`;
+                // Find a player to re-add who is not the one just eliminated
+                const reAddCandidates = eliminatedPlayers.filter(p => p !== unluckyPlayer);
+                if (reAddCandidates.length > 0) {
+                    const playerToReAdd = reAddCandidates[Math.floor(Math.random() * reAddCandidates.length)];
+                    reAddPlayer(playerToReAdd, true); 
+                    message += `<br>ولكن تمت إعادة ${playerToReAdd} للعبة!`;
+                }
             }
             showEliminationPopup(message, '🎁 فاكهة كريمة 🎁', 'generous');
         }
@@ -589,8 +585,9 @@
         function eliminatePlayer(playerName) {
             if (activePlayers.includes(playerName)) {
                 activePlayers = activePlayers.filter(p => p !== playerName);
-                eliminatedPlayers = eliminatedPlayers.filter(p => p !== playerName);
-                eliminatedPlayers.unshift(playerName);
+                if (!eliminatedPlayers.includes(playerName)) {
+                    eliminatedPlayers.unshift(playerName);
+                }
             }
         }
 
@@ -631,7 +628,6 @@
             }, 1000);
         }
 
-        // --- MODIFIED: Popup Function ---
         function showEliminationPopup(message, title, type = 'elimination') {
             if (type === 'shield' || type === 'golden') { document.getElementById('sound-shield')?.play(); }
             else if (type !== 'bomb' && type !== 'generous') { document.getElementById('sound-elimination')?.play(); }
@@ -643,7 +639,7 @@
 
             titleEl.textContent = title;
             messageEl.innerHTML = message;
-            content.className = `popup-content ${type}`; // Applies new style
+            content.className = `popup-content ${type}`;
             popup.classList.add('visible');
         }
 
@@ -752,7 +748,6 @@
             showToast('تم زرع قنبلة جديدة بنجاح! 💣');
         }
 
-        // --- MODIFIED: Bomb Controls Logic ---
         function updateBombControls() {
             const bombControls = document.getElementById('bomb-controls');
             const plantButton = document.getElementById('plant-bomb-btn');
@@ -814,7 +809,6 @@
                 return;
             }
             
-            // Full Reset for new game
             eliminatedPlayers = [];
             fruitAssignments = [];
             playerShields = {};
